@@ -812,11 +812,6 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    Section {
-                        Text("额度由每台 Mac 本机读取；iCloud 仅同步 Telegram 配置、推送设备协调与用量历史。应用更新由 Sparkle 通过 GitHub appcast 分发。")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
                 }
             }
             .formStyle(.grouped)
