@@ -26,7 +26,7 @@ REPO="EEliberto/Reset-macOS"
 DERIVED="/tmp/Reset-Release-${VERSION}"
 STAGE="$(mktemp -d /tmp/reset-dmg.XXXXXX)"
 UPDATES="$ROOT/updates"
-DMG_NAME="Reset!-${VERSION}.dmg"
+DMG_NAME="Reset-${VERSION}.dmg"
 DMG="$UPDATES/$DMG_NAME"
 KEY_FILE="$ROOT/Secrets/sparkle_ed25519"
 SPARKLE_TOOLS="$ROOT/tools/sparkle/bin"
@@ -75,7 +75,7 @@ hdiutil create -ov -volname "Reset!" -srcfolder "$STAGE" -format UDZO "$DMG"
 rm -rf "$STAGE"
 hdiutil verify "$DMG"
 
-NOTES_HTML="$UPDATES/Reset!-${VERSION}.html"
+NOTES_HTML="$UPDATES/Reset-${VERSION}.html"
 cat > "$NOTES_HTML" <<EOF
 <!DOCTYPE html>
 <html lang="zh-Hans">
