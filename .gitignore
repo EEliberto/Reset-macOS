@@ -41,3 +41,4 @@ Telegram 头像.png
 # Swift Package Manager
 .swiftpm/
 Packages/
+.dmg-stage/
