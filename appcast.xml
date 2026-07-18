@@ -5,5 +5,25 @@
     <link>https://github.com/EEliberto/Reset-macOS</link>
     <description>Reset! Sparkle appcast</description>
     <language>zh-Hans</language>
+    <item>
+      <title>Version 270718</title>
+      <pubDate>Sat, 18 Jul 2026 03:32:03 +0000</pubDate>
+      <sparkle:version>270718</sparkle:version>
+      <sparkle:shortVersionString>270718</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[
+        <h2>Reset! 270718</h2>
+        <ul>
+          <li>Sparkle 自动更新</li>
+          <li>Telegram 确认并测试推送</li>
+          <li>本机额度监控 + iCloud 推送协调</li>
+        </ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/EEliberto/Reset-macOS/releases/download/v270718/Reset%21-270718.zip"
+        length="4215757"
+        type="application/octet-stream"
+        sparkle:edSignature="kW2N1o+prRcJjL8IuV7gAPawUwyZCCYnzNewHU9t9Wl91L5Q7Yi2T7O67wn0Nogfkv2OJDkcVZk9zpzRndQsBA==" />
+    </item>
   </channel>
 </rss>
