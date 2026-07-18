@@ -16,6 +16,8 @@ Reset!.dmg
 *.dmg
 *.pkg
 *.zip
+!dist/
+!dist/*.zip
 updates/
 old_updates/
 tools/sparkle/
