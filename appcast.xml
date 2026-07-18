@@ -7,16 +7,16 @@
     <language>zh-Hans</language>
     <item>
       <title>Version 270718</title>
-      <pubDate>Sat, 18 Jul 2026 03:37:29 +0000</pubDate>
+      <pubDate>Sat, 18 Jul 2026 03:38:13 +0000</pubDate>
       <sparkle:version>270718</sparkle:version>
       <sparkle:shortVersionString>270718</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <description><![CDATA[<h2>Reset! 270718</h2>]]></description>
       <enclosure
         url="https://github.com/EEliberto/Reset-macOS/releases/download/v270718/Reset-270718.zip"
-        length="4215757"
+        length="4214549"
         type="application/octet-stream"
-        sparkle:edSignature="f533eUkP/4DuWe+EOoc0dWy8OTX596oj8chCytl99A9DOujb6j6aCHHtHdhDuzQ8p8YoazH4vnMjNisioZtYAg==" />
+        sparkle:edSignature="rVajprr2RB8JR+h4zPaAxKtkL3mO+b0XUt+bRCsP6EKNRoxGZb7QuS+U85jDQrUvNGDP1sYFtjK5407MzCZbAQ==" />
     </item>
   </channel>
 </rss>
