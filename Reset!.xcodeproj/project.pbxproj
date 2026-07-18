@@ -1,0 +1,543 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BBEF23CB69A0231D6CCF410 /* claude.png in Resources */ = {isa = PBXBuildFile; fileRef = DEF8024796D0E6F8CA44400F /* claude.png */; };
+		104FE838CAE2AE508EE87FD1 /* ResetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8F0CEC2AABE946937001F7 /* ResetApp.swift */; };
+		28FA5F63A78D9D43236032B9 /* ResetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E485CE38F62964FB159B0E /* ResetTests.swift */; };
+		2AD6D8AD8461318F9529204D /* cursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 420DF5EB8995C6CD8CC9E9C6 /* cursor.png */; };
+		2B812CEF84A82EC775DFAC9B /* SparkleUpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */; };
+		4295C2979A60435F29C3001F /* LiveUsageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */; };
+		4F2496BBEF176F4A77649319 /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */; };
+		54BE50FD13765EA7B0E65B0C /* chatgpt.png in Resources */ = {isa = PBXBuildFile; fileRef = 079344D730F4B7A4CC2C197B /* chatgpt.png */; };
+		6471F0134AD8A04993515AAE /* SecureTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C8974B5DFC8A5C7B96D9B55 /* SecureTokenStore.swift */; };
+		747A0BABED7171C3152865F0 /* ICloudDeviceSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CA2F6038D3AD7045F1BF7B /* ICloudDeviceSync.swift */; };
+		8A0F4A36EA37F235D02741EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B333E9656CCD5AFC0C33A580 /* Sparkle */; };
+		8FF8BE10C17D4A417BE54089 /* AntigravityQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */; };
+		99E86C513394F3F8C8373B84 /* TelegramBotClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16230BA5039E28563E0F74B0 /* TelegramBotClient.swift */; };
+		A4C69CBC4C1C671EC2FBEAF4 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DB05AAAC33AFE67BED3ACC /* Views.swift */; };
+		ADE35138CA6DC7BEFB3A98E5 /* Reset!.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1EF882BF2AD24B7B6649A311 /* Reset!.icon */; };
+		B899DA3426530BDF9CFC5B05 /* AgentActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */; };
+		BD2ED875B8096902F4D30309 /* antigravity.png in Resources */ = {isa = PBXBuildFile; fileRef = 90B8E2CFEC8F4CF138C0C025 /* antigravity.png */; };
+		C045EA2B9666D47379226CCA /* AgentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6A1D81DB625DAD89592A9E /* AgentDetector.swift */; };
+		C8EB0C6C38A196D6C74ED76C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B0906A8357F5CE034CF4E7 /* Models.swift */; };
+		F0A5EC30AF16A98E47F3823B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A858BCAC78743CE717C827 /* AppModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		19BE95FD80A1D2D9D07D5577 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 67A48F65B55E5060BCD41A5B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 903C91C82E91FFD746CDC1A9;
+			remoteInfo = Reset;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		079344D730F4B7A4CC2C197B /* chatgpt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatgpt.png; sourceTree = "<group>"; };
+		16230BA5039E28563E0F74B0 /* TelegramBotClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelegramBotClient.swift; sourceTree = "<group>"; };
+		1EF882BF2AD24B7B6649A311 /* Reset!.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = "Reset!.icon"; sourceTree = "<group>"; };
+		1FE6AB0582290EBE3596AB5A /* Reset.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reset.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		420DF5EB8995C6CD8CC9E9C6 /* cursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor.png; sourceTree = "<group>"; };
+		49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleUpdateController.swift; sourceTree = "<group>"; };
+		6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityMonitor.swift; sourceTree = "<group>"; };
+		64DB05AAAC33AFE67BED3ACC /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
+		8C8974B5DFC8A5C7B96D9B55 /* SecureTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTokenStore.swift; sourceTree = "<group>"; };
+		90B8E2CFEC8F4CF138C0C025 /* antigravity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = antigravity.png; sourceTree = "<group>"; };
+		94A858BCAC78743CE717C827 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		AF6A1D81DB625DAD89592A9E /* AgentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetector.swift; sourceTree = "<group>"; };
+		C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityQuotaClient.swift; sourceTree = "<group>"; };
+		C2B0906A8357F5CE034CF4E7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D2CA2F6038D3AD7045F1BF7B /* ICloudDeviceSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudDeviceSync.swift; sourceTree = "<group>"; };
+		D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
+		D51C586380B7A069BF401621 /* ResetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DEF8024796D0E6F8CA44400F /* claude.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = claude.png; sourceTree = "<group>"; };
+		E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveUsageReader.swift; sourceTree = "<group>"; };
+		E2E485CE38F62964FB159B0E /* ResetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetTests.swift; sourceTree = "<group>"; };
+		FE8F0CEC2AABE946937001F7 /* ResetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B94556A6A602FD0299E6F20C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A0F4A36EA37F235D02741EB /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		145A1E082079FE0661ABADEB /* Reset */ = {
+			isa = PBXGroup;
+			children = (
+				6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */,
+				AF6A1D81DB625DAD89592A9E /* AgentDetector.swift */,
+				C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */,
+				94A858BCAC78743CE717C827 /* AppModel.swift */,
+				D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */,
+				D2CA2F6038D3AD7045F1BF7B /* ICloudDeviceSync.swift */,
+				E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */,
+				C2B0906A8357F5CE034CF4E7 /* Models.swift */,
+				FE8F0CEC2AABE946937001F7 /* ResetApp.swift */,
+				8C8974B5DFC8A5C7B96D9B55 /* SecureTokenStore.swift */,
+				49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */,
+				16230BA5039E28563E0F74B0 /* TelegramBotClient.swift */,
+				64DB05AAAC33AFE67BED3ACC /* Views.swift */,
+			);
+			path = Reset;
+			sourceTree = "<group>";
+		};
+		3CC14806314B99ED604BF85F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1FE6AB0582290EBE3596AB5A /* Reset.app */,
+				D51C586380B7A069BF401621 /* ResetTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4898BC034F9C988ED959A4B1 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				70B2B05A62FE8ECD203B894F /* ResetTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		5EF05AF5D3BADF4E0AAE1982 = {
+			isa = PBXGroup;
+			children = (
+				1EF882BF2AD24B7B6649A311 /* Reset!.icon */,
+				7F14FAB36F0F285A41793C22 /* Resources */,
+				6A14BFA07B02CBCE363E197B /* Sources */,
+				4898BC034F9C988ED959A4B1 /* Tests */,
+				3CC14806314B99ED604BF85F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6A14BFA07B02CBCE363E197B /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				145A1E082079FE0661ABADEB /* Reset */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		70B2B05A62FE8ECD203B894F /* ResetTests */ = {
+			isa = PBXGroup;
+			children = (
+				E2E485CE38F62964FB159B0E /* ResetTests.swift */,
+			);
+			path = ResetTests;
+			sourceTree = "<group>";
+		};
+		7F14FAB36F0F285A41793C22 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FA3284F77EFA8790FD49D8A8 /* AgentIcons */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		FA3284F77EFA8790FD49D8A8 /* AgentIcons */ = {
+			isa = PBXGroup;
+			children = (
+				90B8E2CFEC8F4CF138C0C025 /* antigravity.png */,
+				079344D730F4B7A4CC2C197B /* chatgpt.png */,
+				DEF8024796D0E6F8CA44400F /* claude.png */,
+				420DF5EB8995C6CD8CC9E9C6 /* cursor.png */,
+			);
+			path = AgentIcons;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		903C91C82E91FFD746CDC1A9 /* Reset */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8DB62D0B08CBAF36A97508C6 /* Build configuration list for PBXNativeTarget "Reset" */;
+			buildPhases = (
+				C4CDA942DC59F592E906245F /* Sources */,
+				22BC88B6537EB59EB4C71BAF /* Resources */,
+				B94556A6A602FD0299E6F20C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Reset;
+			packageProductDependencies = (
+				B333E9656CCD5AFC0C33A580 /* Sparkle */,
+			);
+			productName = Reset;
+			productReference = 1FE6AB0582290EBE3596AB5A /* Reset.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D425BAE36526648B2E207596 /* ResetTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D9B8A29C8F98F97FCC4F5DE /* Build configuration list for PBXNativeTarget "ResetTests" */;
+			buildPhases = (
+				ABE610655B91E2DC9E5EAD51 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EA62392CBDFDDC60CDBA7D7F /* PBXTargetDependency */,
+			);
+			name = ResetTests;
+			packageProductDependencies = (
+			);
+			productName = ResetTests;
+			productReference = D51C586380B7A069BF401621 /* ResetTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		67A48F65B55E5060BCD41A5B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					903C91C82E91FFD746CDC1A9 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 01B1AAF0D6B8323ADBEDED73 /* Build configuration list for PBXProject "Reset!" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5EF05AF5D3BADF4E0AAE1982;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				83540BEE536B2674CBA962F1 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3CC14806314B99ED604BF85F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				903C91C82E91FFD746CDC1A9 /* Reset */,
+				D425BAE36526648B2E207596 /* ResetTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		22BC88B6537EB59EB4C71BAF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADE35138CA6DC7BEFB3A98E5 /* Reset!.icon in Resources */,
+				BD2ED875B8096902F4D30309 /* antigravity.png in Resources */,
+				54BE50FD13765EA7B0E65B0C /* chatgpt.png in Resources */,
+				0BBEF23CB69A0231D6CCF410 /* claude.png in Resources */,
+				2AD6D8AD8461318F9529204D /* cursor.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		ABE610655B91E2DC9E5EAD51 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28FA5F63A78D9D43236032B9 /* ResetTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4CDA942DC59F592E906245F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B899DA3426530BDF9CFC5B05 /* AgentActivityMonitor.swift in Sources */,
+				C045EA2B9666D47379226CCA /* AgentDetector.swift in Sources */,
+				8FF8BE10C17D4A417BE54089 /* AntigravityQuotaClient.swift in Sources */,
+				F0A5EC30AF16A98E47F3823B /* AppModel.swift in Sources */,
+				4F2496BBEF176F4A77649319 /* AppUpdateChecker.swift in Sources */,
+				747A0BABED7171C3152865F0 /* ICloudDeviceSync.swift in Sources */,
+				4295C2979A60435F29C3001F /* LiveUsageReader.swift in Sources */,
+				C8EB0C6C38A196D6C74ED76C /* Models.swift in Sources */,
+				104FE838CAE2AE508EE87FD1 /* ResetApp.swift in Sources */,
+				6471F0134AD8A04993515AAE /* SecureTokenStore.swift in Sources */,
+				2B812CEF84A82EC775DFAC9B /* SparkleUpdateController.swift in Sources */,
+				99E86C513394F3F8C8373B84 /* TelegramBotClient.swift in Sources */,
+				A4C69CBC4C1C671EC2FBEAF4 /* Views.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EA62392CBDFDDC60CDBA7D7F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 903C91C82E91FFD746CDC1A9 /* Reset */;
+			targetProxy = 19BE95FD80A1D2D9D07D5577 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5F7E4ED3CC92AA9B725DE543 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 270718;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 270718;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
+				PRODUCT_MODULE_NAME = Reset;
+				PRODUCT_NAME = "Reset!";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6C2308599EA9898A686EC50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		903101515B6BDF4F59895492 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 270718;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 270718;
+				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
+				PRODUCT_MODULE_NAME = Reset;
+				PRODUCT_NAME = "Reset!";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		A2EE0D8AA053BF04028B4EBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		BD2A6D13340359345612790E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.reset.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reset!.app/Contents/MacOS/Reset!";
+			};
+			name = Release;
+		};
+		CBA6D84A708038D8C4D2F061 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.reset.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reset!.app/Contents/MacOS/Reset!";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01B1AAF0D6B8323ADBEDED73 /* Build configuration list for PBXProject "Reset!" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2EE0D8AA053BF04028B4EBF /* Debug */,
+				6C2308599EA9898A686EC50A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1D9B8A29C8F98F97FCC4F5DE /* Build configuration list for PBXNativeTarget "ResetTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBA6D84A708038D8C4D2F061 /* Debug */,
+				BD2A6D13340359345612790E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8DB62D0B08CBAF36A97508C6 /* Build configuration list for PBXNativeTarget "Reset" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F7E4ED3CC92AA9B725DE543 /* Debug */,
+				903101515B6BDF4F59895492 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		83540BEE536B2674CBA962F1 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B333E9656CCD5AFC0C33A580 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83540BEE536B2674CBA962F1 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 67A48F65B55E5060BCD41A5B /* Project object */;
+}

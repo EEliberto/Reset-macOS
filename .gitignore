@@ -1,0 +1,41 @@
+# macOS / Xcode
+.DS_Store
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Build / packaging
+.build/
+/tmp/
+Reset!.dmg
+*.dmg
+*.pkg
+*.zip
+updates/
+old_updates/
+tools/sparkle/
+
+# Local secrets & working copies (never upload)
+LOCAL_NOTES.md
+LOCAL_SECRETS.md
+Secrets/
+private/
+.env
+.env.*
+*.pem
+*.p12
+*.cer
+*.mobileprovision
+
+# Scratch / reference clones
+work/
+Telegram 头像.png
+
+# Swift Package Manager
+.swiftpm/
+Packages/
