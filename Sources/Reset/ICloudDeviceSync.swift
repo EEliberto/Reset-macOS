@@ -23,7 +23,6 @@ struct TelegramServiceLease: Codable, Sendable {
 }
 
 struct SharedTelegramConfiguration: Codable, Sendable {
-    let token: String?
     let chatID: String
     let updatedAt: Date
 }
@@ -93,8 +92,8 @@ actor ICloudDeviceSync {
         return cachedTelegramConfiguration()
     }
 
-    func setTelegramConfiguration(token: String, chatID: String) throws {
-        let config = SharedTelegramConfiguration(token: token, chatID: chatID, updatedAt: Date())
+    func setTelegramConfiguration(chatID: String) throws {
+        let config = SharedTelegramConfiguration(chatID: chatID, updatedAt: Date())
         try write(config, to: root.appendingPathComponent("configuration/telegram.json"))
         cacheTelegramConfiguration(config)
     }

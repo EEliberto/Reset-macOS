@@ -1053,11 +1053,16 @@ final class LocalAntigravitySession: NSObject, URLSessionDelegate, @unchecked Se
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        guard challenge.protectionSpace.host == "127.0.0.1",
-              let trust = challenge.protectionSpace.serverTrust else {
+        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
+              challenge.protectionSpace.host == "127.0.0.1",
+              let trust = challenge.protectionSpace.serverTrust,
+              SecTrustGetCertificateCount(trust) > 0 else {
             completionHandler(.performDefaultHandling, nil)
             return
         }
+
+        let policy = SecPolicyCreateBasicX509()
+        _ = SecTrustSetPolicies(trust, policy)
         completionHandler(.useCredential, URLCredential(trust: trust))
     }
 }

@@ -167,6 +167,9 @@ final class AppModel: ObservableObject {
         })
         telegramToken = SecureTokenStore.loadTelegramToken() ?? ""
         telegramChatID = ""
+        // One-time migration: purge any residual cleartext token data cached by
+        // previous versions that stored Telegram tokens in UserDefaults.
+        UserDefaults.standard.removeObject(forKey: "reset.cachedTelegramConfiguration")
         deviceNotificationsEnabled = UserDefaults.standard.bool(forKey: Self.deviceNotificationsKey)
         grokBuildIntegrationEnabled = defaults.bool(forKey: Self.grokBuildIntegrationKey)
         launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
@@ -370,36 +373,19 @@ final class AppModel: ObservableObject {
         let now = Date()
         var telegramConfigurationError: String?
         if let sharedTelegram = await deviceSync.telegramConfiguration() {
-            let remoteToken = sharedTelegram.token ?? ""
-            let tokenChanged = !remoteToken.isEmpty && telegramToken != remoteToken
-            if !remoteToken.isEmpty {
-                telegramToken = remoteToken
-                try? SecureTokenStore.saveTelegramToken("")
-            } else if !telegramToken.isEmpty {
-                do {
-                    try await deviceSync.setTelegramConfiguration(
-                        token: telegramToken,
-                        chatID: sharedTelegram.chatID
-                    )
-                    try? SecureTokenStore.saveTelegramToken("")
-                } catch {
-                    telegramConfigurationError = "Telegram 配置迁移失败：\(error.localizedDescription)"
-                }
-            }
             telegramChatID = sharedTelegram.chatID
-            if tokenChanged {
-                pollingTask?.cancel()
-                pollingTask = nil
-                telegramEnabled = false
-                holdsTelegramLease = false
-            }
-        } else if !telegramToken.isEmpty || !telegramChatID.isEmpty {
+            // Overwrite the iCloud file to strip any residual cleartext token
+            // field left by previous app versions.
+            try? await deviceSync.setTelegramConfiguration(chatID: sharedTelegram.chatID)
+        } else if !telegramChatID.isEmpty {
             do {
-                try await deviceSync.setTelegramConfiguration(token: telegramToken, chatID: telegramChatID)
-                try? SecureTokenStore.saveTelegramToken("")
+                try await deviceSync.setTelegramConfiguration(chatID: telegramChatID)
             } catch {
                 telegramConfigurationError = "Telegram 配置写入失败：\(error.localizedDescription)"
             }
+        }
+        if let keychainToken = SecureTokenStore.loadTelegramToken(), !keychainToken.isEmpty {
+            telegramToken = keychainToken
         }
         let presence = DevicePresence(
             deviceID: deviceID,
@@ -820,8 +806,8 @@ final class AppModel: ObservableObject {
                     silent: false
                 )
 
-                try await deviceSync.setTelegramConfiguration(token: token, chatID: chatIDText)
-                try? SecureTokenStore.saveTelegramToken("")
+                try SecureTokenStore.saveTelegramToken(token)
+                try await deviceSync.setTelegramConfiguration(chatID: chatIDText)
                 telegramVerificationMessage = "已确认：\(botLabel) 测试消息发送成功"
                 message = telegramVerificationMessage
                 await synchronizeDevices()
