@@ -66,9 +66,19 @@ final class ResetAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificatio
             let quitItem = NSMenuItem(title: "退出 Reset!", action: #selector(requestQuit), keyEquivalent: "")
             quitItem.target = self
             menu.addItem(quitItem)
-            if let view = window.contentView {
-                NSMenu.popUpContextMenu(menu, with: event, for: view)
-            }
+            // Anchor the native menu below the status item instead of at the
+            // click point, which can make a one-row menu cover the menu bar.
+            // A nil appearance keeps the menu in sync with system light/dark mode.
+            menu.appearance = nil
+            menu.update()
+            menu.popUp(
+                positioning: nil,
+                at: NSPoint(
+                    x: window.frame.minX,
+                    y: window.frame.minY - 4
+                ),
+                in: nil
+            )
             return nil
         }
         NotificationCenter.default.addObserver(

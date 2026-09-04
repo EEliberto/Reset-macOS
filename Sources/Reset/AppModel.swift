@@ -66,27 +66,6 @@ private struct DeviceNotificationClient: Sendable {
         center.removeDeliveredNotifications(withIdentifiers: deliveredIdentifiers)
     }
 
-    func cleanup(now: Date = Date()) async -> Int {
-        let center = UNUserNotificationCenter.current()
-        let owns: (String) -> Bool = { $0.hasPrefix("reset.") }
-        let pending = await center.pendingNotificationRequests()
-        let expiredPending = pending.compactMap { request -> String? in
-            guard owns(request.identifier) else { return nil }
-            guard let trigger = request.trigger else { return request.identifier }
-            let nextDate = (trigger as? UNTimeIntervalNotificationTrigger)?.nextTriggerDate()
-                ?? (trigger as? UNCalendarNotificationTrigger)?.nextTriggerDate()
-                ?? .distantPast
-            return nextDate < now ? request.identifier : nil
-        }
-        center.removePendingNotificationRequests(withIdentifiers: expiredPending)
-        let delivered = await center.deliveredNotifications()
-        let oldDelivered = delivered.compactMap { notification -> String? in
-            guard owns(notification.request.identifier), notification.date < now.addingTimeInterval(-30 * 86_400) else { return nil }
-            return notification.request.identifier
-        }
-        center.removeDeliveredNotifications(withIdentifiers: oldDelivered)
-        return expiredPending.count + oldDelivered.count
-    }
 }
 
 @MainActor
@@ -95,17 +74,6 @@ final class AppModel: ObservableObject {
     @Published private(set) var lastUpdated: Date?
     @Published private(set) var isRefreshing = false
     @Published private(set) var activeProvider: ProviderKind?
-    @Published private(set) var frontmostAgentProvider: ProviderKind?
-    @Published private(set) var isElectedServer = false
-    @Published private(set) var currentServerName = "未发现服务器"
-    @Published private(set) var knownDevices: [DevicePresence] = []
-    @Published var preferredServerID = ""
-    @Published private(set) var iCloudSyncStatus = "尚未协调"
-    @Published var telegramToken = ""
-    @Published var telegramChatID = ""
-    @Published var telegramEnabled = false
-    @Published private(set) var isConfirmingTelegram = false
-    @Published private(set) var telegramVerificationMessage = ""
     @Published var deviceNotificationsEnabled = false
     @Published private(set) var enabledProviders: [ProviderKind: Bool]
     @Published var grokBuildIntegrationEnabled = false
@@ -117,20 +85,12 @@ final class AppModel: ObservableObject {
     @Published private(set) var appVersion = AppUpdateChecker.currentVersion
 
     private let detector = AgentDetector()
-    private let telegram = TelegramBotClient()
     private let deviceNotifications = DeviceNotificationClient()
     private let buildIntegrationMonitor = BuildIntegrationMonitor()
-    private let deviceSync = ICloudDeviceSync()
-    private let deviceID: String
-    private let deviceName: String
-    private var pollingTask: Task<Void, Never>?
     private var autoRefreshTask: Task<Void, Never>?
-    private var deviceSyncTask: Task<Void, Never>?
-    private var telegramConfigurationTask: Task<Void, Never>?
     private var buildIntegrationTask: Task<Void, Never>?
     private var grokEventOffset: UInt64 = 0
     private var refreshPending = false
-    private var holdsTelegramLease = false
     private let observerStore = AppModelObserverStore()
     private var pendingResetEvents: [ResetEvent]
 
@@ -140,46 +100,31 @@ final class AppModel: ObservableObject {
     private static let grokBuildIntegrationKey = "buildIntegration.grokBuild.enabled"
     private static let pendingResetEventsKey = "pendingResetEvents"
     private static let scheduledDeviceResetNotificationsKey = "scheduledDeviceResetNotifications"
-    private static let deviceIDKey = "deviceID"
     private static let lastActiveProviderKey = "lastActiveProvider"
     private static let menuUsageCacheKey = "menuUsageCache"
     private static let menuAPICacheKey = "menuAPICache"
     private static let cursorMeterKey = "cursorActiveMeter"
     private static let antigravityCreditsActiveKey = "antigravityCreditsActive"
-    private static let lastMaintenanceKey = "lastMaintenanceAt"
-    private static let lastServerSeenKey = "lastServerSeenAt"
 
     init() {
         let defaults = UserDefaults.standard
-        if let existingID = defaults.string(forKey: Self.deviceIDKey) {
-            deviceID = existingID
-        } else {
-            let newID = UUID().uuidString.lowercased()
-            defaults.set(newID, forKey: Self.deviceIDKey)
-            deviceID = newID
-        }
-        deviceName = Host.current().localizedName ?? "Mac"
         providerOrder = Self.loadProviderOrder()
         pendingResetEvents = Self.loadPendingResetEvents()
         enabledProviders = Dictionary(uniqueKeysWithValues: ProviderKind.allCases.map { provider in
             let key = Self.providerEnabledKeyPrefix + provider.rawValue
             return (provider, defaults.object(forKey: key) as? Bool ?? true)
         })
-        telegramToken = SecureTokenStore.loadTelegramToken() ?? ""
-        telegramChatID = ""
         deviceNotificationsEnabled = UserDefaults.standard.bool(forKey: Self.deviceNotificationsKey)
         grokBuildIntegrationEnabled = defaults.bool(forKey: Self.grokBuildIntegrationKey)
         launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
         launchAtLoginRequiresApproval = SMAppService.mainApp.status == .requiresApproval
-        telegramEnabled = false
         let rememberedProvider = defaults.string(forKey: Self.lastActiveProviderKey).flatMap(ProviderKind.init(rawValue:))
         if let frontmost = NSWorkspace.shared.frontmostApplication {
             let provider = provider(for: frontmost)
-            activeProvider = provider ?? rememberedProvider
-            frontmostAgentProvider = provider
+            activeProvider = provider ?? rememberedProvider.flatMap { providerEnabled($0) ? $0 : nil }
             if let provider { defaults.set(provider.rawValue, forKey: Self.lastActiveProviderKey) }
         } else {
-            activeProvider = rememberedProvider
+            activeProvider = rememberedProvider.flatMap { providerEnabled($0) ? $0 : nil }
         }
         observerStore.appActivation = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification,
@@ -189,7 +134,6 @@ final class AppModel: ObservableObject {
             guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
             Task { @MainActor [weak self] in
                 let provider = self?.provider(for: app)
-                self?.frontmostAgentProvider = provider
                 if let provider {
                     self?.activeProvider = provider
                     UserDefaults.standard.set(provider.rawValue, forKey: Self.lastActiveProviderKey)
@@ -209,12 +153,6 @@ final class AppModel: ObservableObject {
                 try? await Task.sleep(for: .seconds(60))
             }
         }
-        deviceSyncTask = Task { [weak self] in
-            while !Task.isCancelled {
-                await self?.synchronizeDevices()
-                try? await Task.sleep(for: .seconds(30))
-            }
-        }
         if grokBuildIntegrationEnabled {
             try? buildIntegrationMonitor.setGrokHookEnabled(true)
         }
@@ -226,39 +164,18 @@ final class AppModel: ObservableObject {
             }
         }
         UserDefaults.standard.removeObject(forKey: "usageHistory.v1")
-        Task { [deviceSync] in await deviceSync.purgeLegacyUsageHistory() }
         _ = SparkleUpdateController.shared
     }
 
     deinit {
-        pollingTask?.cancel()
         autoRefreshTask?.cancel()
-        deviceSyncTask?.cancel()
-        telegramConfigurationTask?.cancel()
         buildIntegrationTask?.cancel()
     }
 
     func quitApplication() {
-        pollingTask?.cancel()
         autoRefreshTask?.cancel()
-        deviceSyncTask?.cancel()
         buildIntegrationTask?.cancel()
-        Task {
-            await deviceSync.releaseTelegramLease(deviceID: deviceID)
-            NSApplication.shared.terminate(nil)
-        }
-    }
-
-    var deviceRoleSummary: String {
-        isElectedServer ? "当前服务器" : "待命"
-    }
-
-    func setPreferredServer(_ deviceID: String) {
-        preferredServerID = deviceID
-        Task {
-            try? await deviceSync.setPreferredServerID(deviceID)
-            await synchronizeDevices()
-        }
+        NSApplication.shared.terminate(nil)
     }
 
     func setLaunchAtLogin(_ enabled: Bool) {
@@ -362,133 +279,6 @@ final class AppModel: ObservableObject {
         Task { await refresh() }
     }
 
-    private func synchronizeDevices() async {
-        guard await deviceSync.isAvailable() else {
-            iCloudSyncStatus = "iCloud Drive 不可用"
-            return
-        }
-        let now = Date()
-        var telegramConfigurationError: String?
-        if let sharedTelegram = await deviceSync.telegramConfiguration() {
-            let remoteToken = sharedTelegram.token ?? ""
-            let tokenChanged = !remoteToken.isEmpty && telegramToken != remoteToken
-            if !remoteToken.isEmpty {
-                telegramToken = remoteToken
-                try? SecureTokenStore.saveTelegramToken("")
-            } else if !telegramToken.isEmpty {
-                do {
-                    try await deviceSync.setTelegramConfiguration(
-                        token: telegramToken,
-                        chatID: sharedTelegram.chatID
-                    )
-                    try? SecureTokenStore.saveTelegramToken("")
-                } catch {
-                    telegramConfigurationError = "Telegram 配置迁移失败：\(error.localizedDescription)"
-                }
-            }
-            telegramChatID = sharedTelegram.chatID
-            if tokenChanged {
-                pollingTask?.cancel()
-                pollingTask = nil
-                telegramEnabled = false
-                holdsTelegramLease = false
-            }
-        } else if !telegramToken.isEmpty || !telegramChatID.isEmpty {
-            do {
-                try await deviceSync.setTelegramConfiguration(token: telegramToken, chatID: telegramChatID)
-                try? SecureTokenStore.saveTelegramToken("")
-            } catch {
-                telegramConfigurationError = "Telegram 配置写入失败：\(error.localizedDescription)"
-            }
-        }
-        let presence = DevicePresence(
-            deviceID: deviceID,
-            deviceName: deviceName,
-            serverPriority: 100,
-            lastHeartbeat: now,
-            frontmostProvider: frontmostAgentProvider,
-            telegramConfigured: !telegramToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                && Int64(telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
-        )
-        do {
-            try await deviceSync.writePresence(presence)
-            knownDevices = await deviceSync.allDevices()
-            var sharedPreferred = await deviceSync.preferredServerID()
-            if sharedPreferred == nil {
-                let suggested = ICloudDeviceSync.preferredCoordinator(from: knownDevices)?.deviceID ?? deviceID
-                try? await deviceSync.setPreferredServerID(suggested)
-                sharedPreferred = suggested
-            }
-            preferredServerID = sharedPreferred ?? ""
-            let elected = await deviceSync.electedServer(preferredServerID: sharedPreferred, now: now)
-            let wasElected = isElectedServer
-            let previouslyHeldTelegramLease = holdsTelegramLease
-            isElectedServer = elected?.deviceID == deviceID
-            currentServerName = elected.map { $0.deviceID == sharedPreferred ? $0.deviceName : "\($0.deviceName)（接管）" } ?? "未发现推送设备"
-            if elected?.deviceID == sharedPreferred {
-                UserDefaults.standard.set(now, forKey: Self.lastServerSeenKey)
-            }
-            // Quotas stay local. iCloud only elects which Mac owns Telegram push.
-            let wantsTelegram = !telegramToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                && Int64(telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)) != nil
-            let telegramCandidates = knownDevices.filter {
-                $0.telegramConfigured == true && now.timeIntervalSince($0.lastHeartbeat) < 180
-            }
-            let telegramCoordinator = ICloudDeviceSync.preferredCoordinator(
-                from: telegramCandidates,
-                preferredServerID: sharedPreferred
-            )
-            if telegramCoordinator?.deviceID == deviceID && wantsTelegram {
-                holdsTelegramLease = (try? await deviceSync.acquireOrRenewTelegramLease(device: presence, now: now)) == true
-            } else {
-                holdsTelegramLease = false
-            }
-            if holdsTelegramLease, !previouslyHeldTelegramLease {
-                startTelegram()
-            } else if !holdsTelegramLease, previouslyHeldTelegramLease || (wasElected && !isElectedServer) {
-                suspendTelegramForDeviceRole()
-            }
-            let lastMaintenance = UserDefaults.standard.object(forKey: Self.lastMaintenanceKey) as? Date ?? .distantPast
-            if now.timeIntervalSince(lastMaintenance) > 86_400 {
-                _ = await performMaintenance()
-            }
-            iCloudSyncStatus = telegramConfigurationError
-                ?? "已协调于 \(now.formatted(date: .omitted, time: .shortened))"
-        } catch {
-            iCloudSyncStatus = "协调失败：\(error.localizedDescription)"
-        }
-    }
-
-    @discardableResult
-    func performMaintenance() async -> String {
-        let notificationCount = await deviceNotifications.cleanup()
-        var syncCount = 0
-        var telegramCount = 0
-        if holdsTelegramLease, !telegramToken.isEmpty {
-            let expired = await deviceSync.expiredTelegramNotifications(before: Date().addingTimeInterval(-12 * 3600))
-            for record in expired {
-                do {
-                    try await telegram.deleteMessage(
-                        token: telegramToken,
-                        chatID: record.chatID,
-                        messageID: record.messageID
-                    )
-                    await deviceSync.removeTelegramNotificationRecord(messageID: record.messageID)
-                    telegramCount += 1
-                } catch {
-                    // Retry during the next automatic maintenance pass.
-                }
-            }
-        }
-        if isElectedServer {
-            syncCount = await deviceSync.cleanup().total
-        }
-        UserDefaults.standard.set(Date(), forKey: Self.lastMaintenanceKey)
-        let result = "已清理 \(syncCount) 个 iCloud 过期文件、\(notificationCount) 条本机通知、\(telegramCount) 条 Telegram 提醒"
-        message = result
-        return result
-    }
-
     var menuUsageFraction: Double {
         guard let activeProvider else { return 0 }
         if let usage = statuses.first(where: { $0.provider == activeProvider })?.usage {
@@ -581,7 +371,8 @@ final class AppModel: ObservableObject {
             .compactMap { $0?.lowercased() }
             .joined(separator: " ")
         return ProviderKind.allCases.first { provider in
-            ([provider.title] + provider.executableNames + provider.desktopBundleIdentifiers)
+            providerEnabled(provider)
+                && ([provider.title] + provider.executableNames + provider.desktopBundleIdentifiers)
                 .map { $0.lowercased() }
                 .contains { identity.contains($0) }
         }
@@ -614,7 +405,6 @@ final class AppModel: ObservableObject {
         }
         isRefreshing = true
         message = "正在更新额度…"
-        let dueEvents = pendingResetEvents.filter { $0.resetAt <= Date() }
         let previousStatuses = statuses
         let providers = ProviderKind.allCases.filter { providerEnabled($0) }
         statuses = await detector.detect(providers: providers)
@@ -635,16 +425,7 @@ final class AppModel: ObservableObject {
         deviceNotifications.cancel(identifiers: blockedResetEvents.map(\.id))
         pendingResetEvents = detectedResetEvents.filter { $0.resetAt > Date() && isResetUsable($0, in: statuses) }
         await scheduleDeviceNotifications(for: pendingResetEvents)
-        let eligibleDueEvents = dueEvents.filter { isResetUsable($0, in: statuses) }
-        let handledResetIDs = await sendResetNotifications(eligibleDueEvents)
-        if !telegramToken.isEmpty && !telegramChatID.isEmpty {
-            pendingResetEvents.append(contentsOf: eligibleDueEvents.filter {
-                !handledResetIDs.contains($0.id)
-                    && Date().timeIntervalSince($0.resetAt) < 12 * 3600
-            })
-        }
         savePendingResetEvents()
-        await notifySustainedReadFailures(previous: previousStatuses, current: statuses)
         updateAutomaticProviderOrder()
         lastUpdated = Date()
         isRefreshing = false
@@ -777,253 +558,12 @@ final class AppModel: ObservableObject {
         saveProviderOrder()
     }
 
-    func confirmTelegramConfiguration() {
-        telegramConfigurationTask?.cancel()
-        telegramConfigurationTask = Task { [weak self] in
-            guard let self, !Task.isCancelled else { return }
-            isConfirmingTelegram = true
-            defer { isConfirmingTelegram = false }
-
-            let token = telegramToken.trimmingCharacters(in: .whitespacesAndNewlines)
-            let chatIDText = telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !token.isEmpty else {
-                telegramVerificationMessage = "请填写 Bot Token"
-                message = telegramVerificationMessage
-                return
-            }
-            guard let chatID = Int64(chatIDText) else {
-                telegramVerificationMessage = "请填写有效的 Chat ID（纯数字）"
-                message = telegramVerificationMessage
-                return
-            }
-
-            do {
-                telegramVerificationMessage = "正在校验 Bot Token…"
-                let bot = try await telegram.getMe(token: token)
-                let botLabel = bot.username.map { "@\($0)" } ?? bot.firstName
-
-                telegramVerificationMessage = "正在发送测试消息…"
-                let deviceLabel = Host.current().localizedName ?? "Mac"
-                _ = try await telegram.sendMessage(
-                    token: token,
-                    chatID: chatID,
-                    text: """
-                    <b>Reset! 连接成功</b>
-
-                    机器人：\(htmlEscape(botLabel))
-                    设备：\(htmlEscape(deviceLabel))
-                    版本：\(htmlEscape(AppUpdateChecker.currentVersion))
-
-                    之后的额度提醒将推送到此对话。
-                    """,
-                    parseMode: "HTML",
-                    silent: false
-                )
-
-                try await deviceSync.setTelegramConfiguration(token: token, chatID: chatIDText)
-                try? SecureTokenStore.saveTelegramToken("")
-                telegramVerificationMessage = "已确认：\(botLabel) 测试消息发送成功"
-                message = telegramVerificationMessage
-                await synchronizeDevices()
-                if holdsTelegramLease {
-                    startTelegram()
-                }
-            } catch {
-                telegramVerificationMessage = "确认失败：\(error.localizedDescription)"
-                message = telegramVerificationMessage
-                telegramEnabled = false
-            }
-        }
-    }
-
     func checkForUpdates(force: Bool = true) {
         SparkleUpdateController.shared.checkForUpdates()
     }
 
     func openRepository() {
         AppUpdateChecker.open(AppUpdateChecker.repositoryURL)
-    }
-
-    private func startTelegram() {
-        pollingTask?.cancel()
-        guard !telegramToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            message = "请先填写 Telegram Bot Token"
-            return
-        }
-        guard Int64(telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)) != nil else {
-            telegramEnabled = false
-            message = "请先填写有效的 Telegram Chat ID"
-            return
-        }
-        guard holdsTelegramLease else {
-            telegramEnabled = false
-            message = "Telegram 配置已保存"
-            Task { await synchronizeDevices() }
-            return
-        }
-        telegramEnabled = true
-        let telegramClient = telegram
-        let token = telegramToken
-        pollingTask = Task { [weak self] in
-            try? await telegramClient.configureCommands(token: token)
-            guard !Task.isCancelled else { return }
-            await telegramClient.poll(token: token) { [weak self] update in
-                await self?.handle(update)
-            }
-        }
-        message = "Telegram 已启动"
-    }
-
-    private func suspendTelegramForDeviceRole() {
-        pollingTask?.cancel()
-        pollingTask = nil
-        telegramEnabled = false
-        message = "Telegram 已交由服务器设备运行"
-    }
-
-    private func handle(_ update: TelegramUpdate) async {
-        guard holdsTelegramLease,
-              let lease = await deviceSync.telegramLease(),
-              lease.holderDeviceID == deviceID,
-              (try? await deviceSync.claimTelegramUpdate(updateID: update.updateID, deviceID: deviceID)) == true else { return }
-        guard let chatID = update.chatID,
-              let configuredChatID = Int64(telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)),
-              configuredChatID == chatID else { return }
-        if let callbackData = update.callbackData, let callbackID = update.callbackID {
-            await handleTelegramCallback(
-                callbackData,
-                callbackID: callbackID,
-                chatID: chatID,
-                messageID: update.messageID
-            )
-            return
-        }
-        let text = update.text?.lowercased() ?? ""
-        let response: String
-        var keyboard: [[TelegramInlineButton]]?
-        switch text {
-        case "/start", "/menu", "菜单", "menu", "🏠 菜单":
-            response = "<b>Reset!</b>\n\n选择下方功能。"
-        case "/quota", "额度", "额度管理", "查看额度", "📊 额度":
-            response = quotaSummary()
-            keyboard = quotaKeyboard
-        case "/refresh", "🔄 立即刷新":
-            await refresh()
-            response = quotaSummary()
-        default:
-            response = "请选择下方功能。"
-        }
-        _ = try? await telegram.sendMessage(
-            token: telegramToken,
-            chatID: chatID,
-            text: response,
-            parseMode: "HTML",
-            keyboard: keyboard,
-            replyKeyboard: keyboard == nil ? telegramMainKeyboard : nil,
-            silent: false
-        )
-    }
-
-    private var telegramMainKeyboard: [[String]] {
-        [["查看额度"]]
-    }
-
-    private var quotaKeyboard: [[TelegramInlineButton]] {
-        [[TelegramInlineButton(text: "立即刷新", callbackData: "quota:refresh")]]
-    }
-
-    private func handleTelegramCallback(_ data: String, callbackID: String, chatID: Int64, messageID: Int?) async {
-        try? await telegram.answerCallback(token: telegramToken, callbackID: callbackID, text: "正在处理…")
-        let response: String
-        switch data {
-        case "quota:refresh":
-            await refresh()
-            response = quotaSummary()
-        default:
-            response = "这个操作已经失效，请重新查看额度。"
-        }
-        let keyboard = quotaKeyboard
-        if let messageID {
-            try? await telegram.editMessage(
-                token: telegramToken,
-                chatID: chatID,
-                messageID: messageID,
-                text: response,
-                parseMode: "HTML",
-                keyboard: keyboard
-            )
-        } else {
-            _ = try? await telegram.sendMessage(
-                token: telegramToken,
-                chatID: chatID,
-                text: response,
-                parseMode: "HTML",
-                keyboard: keyboard,
-                silent: false
-            )
-        }
-    }
-
-    private func statusSummary() -> String {
-        """
-        <b>推送设备</b>
-
-        \(htmlEscape(currentServerName))
-        协调：\(htmlEscape(iCloudSyncStatus))
-        """
-    }
-
-    private func devicesSummary() async -> String {
-        let devices = await deviceSync.allDevices()
-        guard !devices.isEmpty else { return "<b>设备</b>\n\n尚未发现其他设备。" }
-        let rows = devices.map { device in
-            let online = Date().timeIntervalSince(device.lastHeartbeat) < 180 ? "在线" : "离线"
-            return "• <b>\(htmlEscape(device.deviceName))</b>\n　\(online)，\(device.lastHeartbeat.formatted(date: .omitted, time: .shortened))"
-        }
-        return "<b>设备</b>\n\n" + rows.joined(separator: "\n\n")
-    }
-
-    private func quotaSummary() -> String {
-        let rows = visibleStatuses.map { status in
-            guard let usage = status.usage else {
-                return "<b>\(htmlEscape(status.provider.title))</b>\n\(htmlEscape(status.state.title))"
-            }
-            if !usage.groups.isEmpty {
-                let groups = usage.groups.sorted { lhs, rhs in
-                    func rank(_ name: String) -> Int {
-                        name == "Gemini Models" ? 0 : name == "Claude and GPT models" ? 1 : 2
-                    }
-                    return rank(lhs.name) < rank(rhs.name)
-                }.map { group in
-                    let blocks = [
-                        group.fiveHour.map { telegramQuotaBlock(label: "5 小时", window: $0) },
-                        group.sevenDay.map { telegramQuotaBlock(label: "一周", window: $0) }
-                    ].compactMap { $0 }
-                    return (["<b>\(htmlEscape(group.name))</b>"] + blocks).joined(separator: "\n")
-                }
-                let credits = usage.displayableAICredits.map {
-                    "\nAPI 额度：剩余 \($0.formatted(.number.precision(.fractionLength(0...2))))"
-                } ?? ""
-                return "<b>\(htmlEscape(status.provider.title))</b>\n\(groups.joined(separator: "\n"))\(credits)"
-            }
-            if status.provider == .cursor {
-                let blocks = [
-                    usage.cursorAutoComposer.map { telegramQuotaBlock(label: "Auto + Composer", window: $0) },
-                    usage.displayableCursorAPIWindow
-                        .map { telegramQuotaBlock(label: "API", window: $0) }
-                ].compactMap { $0 }
-                return (["<b>Cursor</b>"] + blocks).joined(separator: "\n")
-            }
-            let blocks = [
-                usage.fiveHour.map { telegramQuotaBlock(label: "5 小时", window: $0) },
-                usage.sevenDay.map { telegramQuotaBlock(label: "一周", window: $0) }
-                    ?? usage.monthly.map { telegramQuotaBlock(label: "账单", window: $0) },
-                usage.displayableAPIWindow
-                    .map { telegramQuotaBlock(label: "API", window: $0) }
-            ].compactMap { $0 }
-            return (["<b>\(htmlEscape(status.provider.title))</b>"] + blocks).joined(separator: "\n")
-        }
-        return "<b>额度总览</b>\n\n" + rows.joined(separator: "\n\n")
     }
 
     func setDeviceNotificationsEnabled(_ enabled: Bool) async {
@@ -1036,47 +576,6 @@ final class AppModel: ObservableObject {
             deviceNotificationsEnabled = false
         }
         UserDefaults.standard.set(deviceNotificationsEnabled, forKey: Self.deviceNotificationsKey)
-    }
-
-    private func sendResetNotifications(_ events: [ResetEvent]) async -> Set<String> {
-        guard !events.isEmpty,
-              holdsTelegramLease,
-              telegramEnabled,
-              let chatID = Int64(telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)) else { return [] }
-        var claimed: [ResetEvent] = []
-        var handledIDs: Set<String> = []
-        for event in events {
-            do {
-                if try await deviceSync.claimTelegramNotification(eventID: event.id, deviceID: deviceID) {
-                    claimed.append(event)
-                } else {
-                    handledIDs.insert(event.id)
-                }
-            } catch {
-                // Keep this event retryable when iCloud coordination itself is
-                // temporarily unavailable.
-            }
-        }
-        guard !claimed.isEmpty else { return handledIDs }
-        let lines = claimed.map { event in
-            "• <b>\(htmlEscape(event.providerName))</b>：\(htmlEscape(event.quotaName))\n　\(htmlEscape(event.periodName))已恢复。"
-        }
-        let text = "<b>额度已重置</b>\n\n" + lines.joined(separator: "\n\n")
-        do {
-            let messageID = try await telegram.sendMessage(
-                token: telegramToken,
-                chatID: chatID,
-                text: text,
-                parseMode: "HTML",
-                keyboard: nil,
-                silent: false
-            )
-            try? await deviceSync.recordTelegramNotification(messageID: messageID, chatID: chatID)
-            handledIDs.formUnion(claimed.map(\.id))
-        } catch {
-            for event in claimed { await deviceSync.releaseTelegramNotificationClaim(eventID: event.id) }
-        }
-        return handledIDs
     }
 
     private func isResetUsable(_ event: ResetEvent, in statuses: [AgentStatus]) -> Bool {
@@ -1126,7 +625,6 @@ final class AppModel: ObservableObject {
     }
 
     private func notifyLowQuotaTransitions(previous: [AgentStatus], current: [AgentStatus]) async {
-        var telegramLines: [String] = []
         for status in current where providerEnabled(status.provider) {
             guard let usage = status.usage else { continue }
             let previousUsage = previous.first(where: { $0.provider == status.provider })?.usage
@@ -1170,60 +668,7 @@ final class AppModel: ObservableObject {
                         body: body
                     )
                 }
-                telegramLines.append("• <b>\(htmlEscape(status.provider.title))</b>：\(htmlEscape(body))")
             }
-        }
-        await sendTelegramAlert(
-            title: "低额度预警",
-            lines: telegramLines,
-            claimPrefix: "low"
-        )
-    }
-
-    private func notifySustainedReadFailures(previous: [AgentStatus], current: [AgentStatus]) async {
-        var telegramLines: [String] = []
-        for status in current {
-            guard status.diagnostics?.health == .failing
-                    || status.diagnostics?.health == .authorizationRequired else { continue }
-            let previousHealth = previous.first(where: { $0.provider == status.provider })?.diagnostics?.health
-            guard previousHealth != .failing && previousHealth != .authorizationRequired else { continue }
-            let body = "固定额度查询入口已连续 10 分钟没有成功响应。\(status.detail ?? "请检查登录状态或网络。")"
-            if deviceNotificationsEnabled {
-                await deviceNotifications.notifyNow(
-                    identifier: "reset.unresponsive.\(status.provider.rawValue).\(Int(Date().timeIntervalSince1970 / 86_400))",
-                    title: "\(status.provider.title) 额度查询无响应",
-                    body: body
-                )
-            }
-            telegramLines.append("• <b>\(htmlEscape(status.provider.title))</b>：\(htmlEscape(body))")
-        }
-        await sendTelegramAlert(
-            title: "额度查询异常",
-            lines: telegramLines,
-            claimPrefix: "unresponsive"
-        )
-    }
-
-    private func sendTelegramAlert(title: String, lines: [String], claimPrefix: String) async {
-        guard !lines.isEmpty,
-              holdsTelegramLease,
-              telegramEnabled,
-              let chatID = Int64(telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines)) else { return }
-        let bucket = Int(Date().timeIntervalSince1970 / 3600)
-        let eventID = "\(claimPrefix).\(bucket).\(lines.joined(separator: "|"))"
-        guard (try? await deviceSync.claimTelegramNotification(eventID: eventID, deviceID: deviceID)) == true else { return }
-        do {
-            let messageID = try await telegram.sendMessage(
-                token: telegramToken,
-                chatID: chatID,
-                text: "<b>\(htmlEscape(title))</b>\n\n" + lines.joined(separator: "\n\n"),
-                parseMode: "HTML",
-                keyboard: nil,
-                silent: false
-            )
-            try? await deviceSync.recordTelegramNotification(messageID: messageID, chatID: chatID)
-        } catch {
-            await deviceSync.releaseTelegramNotificationClaim(eventID: eventID)
         }
     }
 
@@ -1374,38 +819,6 @@ private struct ResetEvent: Codable, Sendable {
         "reset.\(providerName).\(quotaName).\(periodName)."
     }
 }
-
-private func htmlEscape(_ text: String) -> String {
-    text
-        .replacingOccurrences(of: "&", with: "&amp;")
-        .replacingOccurrences(of: "<", with: "&lt;")
-        .replacingOccurrences(of: ">", with: "&gt;")
-        .replacingOccurrences(of: "\"", with: "&quot;")
-}
-
-private func telegramQuotaBlock(label: String, window: QuotaWindow) -> String {
-    let value = max(0, min(100, window.remaining))
-    let marker = min(10, max(0, Int((value / 10).rounded())))
-    let bar = String(repeating: "━", count: marker) + "●" + String(repeating: "─", count: 10 - marker)
-    let reset = window.resetsAt.map(telegramChineseDateTime) ?? "未提供"
-    let quotaLabel: String
-    switch label {
-    case "API": quotaLabel = "API 额度"
-    case "Auto + Composer": quotaLabel = "Auto + Composer 额度"
-    case "5 小时", "一周", "账单": quotaLabel = "\(label)额度"
-    default: quotaLabel = "\(label) 额度"
-    }
-    return "<b>\(htmlEscape(quotaLabel))剩余 \(Int(value))%</b>\n\(bar)\n重置于 \(reset)"
-}
-
-private func telegramChineseDateTime(_ date: Date) -> String {
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "zh_CN")
-    formatter.timeZone = .current
-    formatter.dateFormat = "M月d日 HH:mm"
-    return formatter.string(from: date)
-}
-
 
 private extension ProviderUsage {
     var primaryFiveHour: QuotaWindow? {

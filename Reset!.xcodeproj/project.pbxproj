@@ -17,13 +17,10 @@
 		4295C2979A60435F29C3001F /* LiveUsageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */; };
 		4F2496BBEF176F4A77649319 /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */; };
 		54BE50FD13765EA7B0E65B0C /* chatgpt.png in Resources */ = {isa = PBXBuildFile; fileRef = 079344D730F4B7A4CC2C197B /* chatgpt.png */; };
-		6471F0134AD8A04993515AAE /* SecureTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C8974B5DFC8A5C7B96D9B55 /* SecureTokenStore.swift */; };
-		747A0BABED7171C3152865F0 /* ICloudDeviceSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2CA2F6038D3AD7045F1BF7B /* ICloudDeviceSync.swift */; };
 		7676951A132D6F795C847771 /* BuildIntegrationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3244D8426577ADE2C280B2D7 /* BuildIntegrationMonitor.swift */; };
 		8A0F4A36EA37F235D02741EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B333E9656CCD5AFC0C33A580 /* Sparkle */; };
 		8FF8BE10C17D4A417BE54089 /* AntigravityQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */; };
 		914781E4AE7F4B7A5C938178 /* antigravity-ide.png in Resources */ = {isa = PBXBuildFile; fileRef = 0153D7FF565673259671E404 /* antigravity-ide.png */; };
-		99E86C513394F3F8C8373B84 /* TelegramBotClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16230BA5039E28563E0F74B0 /* TelegramBotClient.swift */; };
 		A4C69CBC4C1C671EC2FBEAF4 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DB05AAAC33AFE67BED3ACC /* Views.swift */; };
 		ADE35138CA6DC7BEFB3A98E5 /* Reset!.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1EF882BF2AD24B7B6649A311 /* Reset!.icon */; };
 		B899DA3426530BDF9CFC5B05 /* AgentActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */; };
@@ -48,7 +45,6 @@
 		0153D7FF565673259671E404 /* antigravity-ide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "antigravity-ide.png"; sourceTree = "<group>"; };
 		079344D730F4B7A4CC2C197B /* chatgpt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatgpt.png; sourceTree = "<group>"; };
 		10A47A2E9B3C09B9D10160F1 /* kimi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kimi.png; sourceTree = "<group>"; };
-		16230BA5039E28563E0F74B0 /* TelegramBotClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelegramBotClient.swift; sourceTree = "<group>"; };
 		1EF882BF2AD24B7B6649A311 /* Reset!.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = "Reset!.icon"; sourceTree = "<group>"; };
 		1FE6AB0582290EBE3596AB5A /* Reset.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reset.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3244D8426577ADE2C280B2D7 /* BuildIntegrationMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildIntegrationMonitor.swift; sourceTree = "<group>"; };
@@ -57,14 +53,12 @@
 		6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityMonitor.swift; sourceTree = "<group>"; };
 		64DB05AAAC33AFE67BED3ACC /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
 		829FDBBD702941D8A7948119 /* grok-build.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grok-build.png"; sourceTree = "<group>"; };
-		8C8974B5DFC8A5C7B96D9B55 /* SecureTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTokenStore.swift; sourceTree = "<group>"; };
 		90B8E2CFEC8F4CF138C0C025 /* antigravity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = antigravity.png; sourceTree = "<group>"; };
 		94A858BCAC78743CE717C827 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		AF6A1D81DB625DAD89592A9E /* AgentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetector.swift; sourceTree = "<group>"; };
 		C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityQuotaClient.swift; sourceTree = "<group>"; };
 		C2B0906A8357F5CE034CF4E7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		CECD1E60FBE495BA95D4356B /* KimiQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KimiQuotaClient.swift; sourceTree = "<group>"; };
-		D2CA2F6038D3AD7045F1BF7B /* ICloudDeviceSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudDeviceSync.swift; sourceTree = "<group>"; };
 		D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
 		D51C586380B7A069BF401621 /* ResetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEF8024796D0E6F8CA44400F /* claude.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = claude.png; sourceTree = "<group>"; };
@@ -94,14 +88,11 @@
 				94A858BCAC78743CE717C827 /* AppModel.swift */,
 				D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */,
 				3244D8426577ADE2C280B2D7 /* BuildIntegrationMonitor.swift */,
-				D2CA2F6038D3AD7045F1BF7B /* ICloudDeviceSync.swift */,
 				CECD1E60FBE495BA95D4356B /* KimiQuotaClient.swift */,
 				E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */,
 				C2B0906A8357F5CE034CF4E7 /* Models.swift */,
 				FE8F0CEC2AABE946937001F7 /* ResetApp.swift */,
-				8C8974B5DFC8A5C7B96D9B55 /* SecureTokenStore.swift */,
 				49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */,
-				16230BA5039E28563E0F74B0 /* TelegramBotClient.swift */,
 				64DB05AAAC33AFE67BED3ACC /* Views.swift */,
 			);
 			path = Reset;
@@ -288,14 +279,11 @@
 				F0A5EC30AF16A98E47F3823B /* AppModel.swift in Sources */,
 				4F2496BBEF176F4A77649319 /* AppUpdateChecker.swift in Sources */,
 				7676951A132D6F795C847771 /* BuildIntegrationMonitor.swift in Sources */,
-				747A0BABED7171C3152865F0 /* ICloudDeviceSync.swift in Sources */,
 				E76452A81A7C7E01A2CD3AC3 /* KimiQuotaClient.swift in Sources */,
 				4295C2979A60435F29C3001F /* LiveUsageReader.swift in Sources */,
 				C8EB0C6C38A196D6C74ED76C /* Models.swift in Sources */,
 				104FE838CAE2AE508EE87FD1 /* ResetApp.swift in Sources */,
-				6471F0134AD8A04993515AAE /* SecureTokenStore.swift in Sources */,
 				2B812CEF84A82EC775DFAC9B /* SparkleUpdateController.swift in Sources */,
-				99E86C513394F3F8C8373B84 /* TelegramBotClient.swift in Sources */,
 				A4C69CBC4C1C671EC2FBEAF4 /* Views.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,7 +305,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 270726;
+				CURRENT_PROJECT_VERSION = 260904;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -325,7 +313,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 270726;
+				MARKETING_VERSION = 260904;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
 				PRODUCT_MODULE_NAME = Reset;
 				PRODUCT_NAME = "Reset!";
@@ -395,7 +383,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 270726;
+				CURRENT_PROJECT_VERSION = 260904;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -403,7 +391,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 270726;
+				MARKETING_VERSION = 260904;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
 				PRODUCT_MODULE_NAME = Reset;
 				PRODUCT_NAME = "Reset!";

@@ -70,30 +70,6 @@ final class ResetTests: XCTestCase {
         XCTAssertNil(usage.displayableAICredits)
     }
 
-    func testDesignatedServerWinsCoordinatorElection() {
-        let now = Date()
-        let ordinary = DevicePresence(deviceID: "a", deviceName: "MacBook", serverPriority: 50, lastHeartbeat: now, frontmostProvider: nil)
-        let server = DevicePresence(deviceID: "z", deviceName: "Mac mini", serverPriority: 100, lastHeartbeat: now, frontmostProvider: nil)
-        XCTAssertEqual(ICloudDeviceSync.preferredCoordinator(from: [ordinary, server])?.deviceID, "z")
-    }
-
-    func testOrdinaryDeviceCanBecomeFallbackCoordinator() {
-        let now = Date()
-        let first = DevicePresence(deviceID: "a", deviceName: "MacBook", serverPriority: 100, lastHeartbeat: now, frontmostProvider: nil)
-        let second = DevicePresence(deviceID: "b", deviceName: "iMac", serverPriority: 100, lastHeartbeat: now, frontmostProvider: nil)
-        XCTAssertEqual(ICloudDeviceSync.preferredCoordinator(from: [second, first])?.deviceID, "a")
-    }
-
-    func testPreferredServerOverridesPriority() {
-        let now = Date()
-        let preferred = DevicePresence(deviceID: "book", deviceName: "MacBook", serverPriority: 50, lastHeartbeat: now, frontmostProvider: nil)
-        let higherPriority = DevicePresence(deviceID: "mini", deviceName: "Mac mini", serverPriority: 100, lastHeartbeat: now, frontmostProvider: nil)
-        XCTAssertEqual(
-            ICloudDeviceSync.preferredCoordinator(from: [higherPriority, preferred], preferredServerID: "book")?.deviceID,
-            "book"
-        )
-    }
-
     func testAntigravityQuotaSummaryParsesFiveHourAndWeeklyBuckets() throws {
         let data = Data(
             """

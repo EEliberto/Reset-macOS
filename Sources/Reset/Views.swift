@@ -40,15 +40,17 @@ struct MenuBarView: View {
                     }
                     .frame(maxWidth: .infinity, minHeight: 54)
                 } else {
-                    VStack(spacing: 10) {
-                        ForEach(model.visibleStatuses) { status in
-                            QuotaCard(status: status) { model.openAgent(status.provider) }
-                        }
-                        ForEach(model.visibleBuildIntegrations) { status in
-                            BuildIntegrationCard(status: status)
+                    GlassEffectContainer(spacing: 10) {
+                        VStack(spacing: 10) {
+                            ForEach(model.visibleStatuses) { status in
+                                QuotaCard(status: status) { model.openAgent(status.provider) }
+                            }
+                            ForEach(model.visibleBuildIntegrations) { status in
+                                BuildIntegrationCard(status: status)
+                            }
                         }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 8)
                     .background {
                         GeometryReader { proxy in
                             Color.clear.preference(
@@ -67,8 +69,8 @@ struct MenuBarView: View {
         .safeAreaBar(edge: .top, spacing: 0) {
             dashboardHeader
                 .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+                .padding(.top, 18)
+                .padding(.bottom, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background {
                     GeometryReader { proxy in
@@ -298,7 +300,6 @@ struct QuotaCard: View {
         }
         .padding(14)
         .quotaGlass(cornerRadius: 12)
-        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(tint.opacity(0.18), lineWidth: 1))
     }
 }
 
@@ -434,14 +435,13 @@ private struct AntigravityCompactQuotaRow: View {
             }
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(.thinMaterial)
+                    Capsule().fill(Color.primary.opacity(0.08))
                     Capsule()
                         .fill(LinearGradient(
                             colors: window.remaining < 20 ? [.red, .orange] : gradient,
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
-                        .overlay(Capsule().stroke(.white.opacity(0.35), lineWidth: 0.5))
                         .frame(width: max(5, proxy.size.width * window.remaining / 100))
                 }
             }
@@ -474,10 +474,6 @@ private struct AntigravityQuotaGroupView: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.primary.opacity(0.07), lineWidth: 1)
-        }
     }
 }
 
@@ -557,11 +553,10 @@ private struct QuotaMetric: View {
             }
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(.thinMaterial)
+                    Capsule().fill(Color.primary.opacity(0.08))
                     Capsule().fill(window.remaining < 20
                         ? LinearGradient(colors: [.red.opacity(0.82), .pink.opacity(0.72)], startPoint: .leading, endPoint: .trailing)
                         : LinearGradient(colors: gradient, startPoint: .leading, endPoint: .trailing))
-                        .overlay(Capsule().stroke(.white.opacity(0.35), lineWidth: 0.5))
                         .frame(width: max(4, proxy.size.width * window.remaining / 100))
                 }
             }
@@ -610,9 +605,12 @@ private extension View {
     @ViewBuilder
     func quotaGlass(cornerRadius: CGFloat) -> some View {
         if #available(macOS 26.0, *) {
-            self.glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
+            glassEffect(.regular, in: .rect(cornerRadius: cornerRadius))
         } else {
-            self.background(.regularMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            background(
+                .regularMaterial,
+                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
         }
     }
 }
@@ -657,11 +655,6 @@ private struct CompactModelTile: View {
         .overlay {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .fill(Color.primary.opacity(0.045))
-                .allowsHitTesting(false)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.primary.opacity(0.08), lineWidth: 0.6)
                 .allowsHitTesting(false)
         }
         .shadow(color: .black.opacity(0.06), radius: 2, y: 1)
@@ -714,25 +707,23 @@ private extension Array where Element == QuotaGroup {
 struct SettingsView: View {
     @ObservedObject var model: AppModel
     @ObservedObject private var sparkle = SparkleUpdateController.shared
-    @State private var selectedPane: SettingsPane = .telegram
+    @State private var selectedPane: SettingsPane = .general
     @State private var backStack: [SettingsPane] = []
     @State private var forwardStack: [SettingsPane] = []
     @State private var isHistoryNavigation = false
 
     private enum SettingsPane: String, CaseIterable, Identifiable {
-        case general, telegram, about
+        case general, about
         var id: Self { self }
         var title: String {
             switch self {
             case .general: "通用"
-            case .telegram: "Telegram"
             case .about: "关于"
             }
         }
         var symbol: String {
             switch self {
             case .general: "gearshape"
-            case .telegram: "paperplane"
             case .about: "info.circle"
             }
         }
@@ -784,59 +775,6 @@ struct SettingsView: View {
                         }
                     } header: {
                         Text("Agent 接入")
-                    }
-                case .telegram:
-                    Section {
-                        SecureField("Bot Token", text: $model.telegramToken)
-                        TextField("绑定 Chat ID", text: $model.telegramChatID)
-                        HStack {
-                            Circle().fill(model.telegramEnabled ? .green : .gray).frame(width: 8, height: 8)
-                            Text(model.telegramEnabled
-                                 ? "运行中"
-                                 : (model.telegramToken.isEmpty || model.telegramChatID.isEmpty ? "未配置" : "待命"))
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Button {
-                                model.confirmTelegramConfiguration()
-                            } label: {
-                                if model.isConfirmingTelegram {
-                                    ProgressView()
-                                        .controlSize(.small)
-                                } else {
-                                    Text("确认并测试推送")
-                                }
-                            }
-                            .disabled(
-                                model.isConfirmingTelegram
-                                    || model.telegramToken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                                    || model.telegramChatID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                            )
-                        }
-                        if !model.telegramVerificationMessage.isEmpty {
-                            Text(model.telegramVerificationMessage)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    } header: {
-                        Text("机器人")
-                    } footer: {
-                        Text("填写后点“确认并测试推送”：会校验 Token、向该 Chat 发送一条测试消息，成功后才写入 iCloud 并启用推送。获取 Chat ID：向 @userinfobot 发送任意消息即可。")
-                    }
-                    Section {
-                        Picker("首选推送设备", selection: Binding(
-                            get: { model.preferredServerID },
-                            set: { model.setPreferredServer($0) }
-                        )) {
-                            ForEach(model.knownDevices, id: \.deviceID) { device in
-                                Text(device.deviceName).tag(device.deviceID)
-                            }
-                        }
-                        LabeledContent("当前推送设备", value: model.currentServerName)
-                        LabeledContent("协调状态", value: model.iCloudSyncStatus)
-                    } header: {
-                        Text("推送设备")
-                    } footer: {
-                        Text("额度仅在本机读取。iCloud 只用于在多台 Mac 间选出一台负责 Telegram 推送，避免重复发送。")
                     }
                 case .about:
                     Section {
@@ -1002,10 +940,6 @@ private struct BuildIntegrationCard: View {
         }
         .padding(14)
         .quotaGlass(cornerRadius: 12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.gray.opacity(0.18), lineWidth: 1)
-        )
     }
 }
 

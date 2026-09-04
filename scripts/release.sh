@@ -84,23 +84,9 @@ hdiutil create -ov -volname "Reset!" -srcfolder "$STAGE" -format UDZO "$DMG"
 hdiutil verify "$DMG"
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
 
-NOTES_HTML="$UPDATES/Reset-${VERSION}.html"
-cat > "$NOTES_HTML" <<'EOF'
-<!DOCTYPE html>
-<html lang="zh-Hans">
-<body>
-  <h2>感谢你使用 Reset!</h2>
-  <p>本次 270726 带来了如下更新：</p>
-  <ol>
-    <li>新增对 Grok CLI、Kimi、Antigravity IDE 的支持，在设置中打开对应 Agent 开关按钮即可，同时支持关闭不需要的 Agent。</li>
-    <li>修复了一些已知问题。</li>
-  </ol>
-  <p>如果你在使用 Reset! 时遇到了任何问题，欢迎在 <a href="https://github.com/EEliberto/Reset-macOS/issues">GitHub</a> 提交你的 Issue。</p>
-</body>
-</html>
-EOF
-
-if [[ "$VERSION" != "270726" ]]; then
+NOTES_HTML="$ROOT/RELEASE_NOTES_${VERSION}.html"
+if [[ ! -f "$NOTES_HTML" ]]; then
+  NOTES_HTML="$UPDATES/Reset-${VERSION}.html"
   cat > "$NOTES_HTML" <<EOF
 <!DOCTYPE html>
 <html lang="zh-Hans">
