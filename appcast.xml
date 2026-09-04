@@ -6,25 +6,26 @@
     <description>Reset! Sparkle appcast</description>
     <language>zh-Hans</language>
     <item>
-      <title>Version 270726</title>
-      <pubDate>Sun, 26 Jul 2026 05:07:29 +0000</pubDate>
-      <sparkle:version>270726</sparkle:version>
-      <sparkle:shortVersionString>270726</sparkle:shortVersionString>
+      <title>Version 260904</title>
+      <pubDate>Fri, 04 Sep 2026 10:00:58 +0000</pubDate>
+      <sparkle:version>20260904</sparkle:version>
+      <sparkle:shortVersionString>260904</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <description><![CDATA[<body>
   <h2>感谢你使用 Reset!</h2>
-  <p>本次 270726 带来了如下更新：</p>
+  <p>本次更新进行了如下更新和修复：</p>
   <ol>
-    <li>新增对 Grok CLI、Kimi、Antigravity IDE 的支持，在设置中打开对应 Agent 开关按钮即可，同时支持关闭不需要的 Agent。</li>
-    <li>修复了一些已知问题。</li>
+    <li>由于技术原因，Telegram Bot 功能暂时下线，暂无恢复日期。</li>
+    <li>已为 macOS 27 Golde Gate 准备好！</li>
+    <li>优化和修复了可能出现或者已经出现的 UI 问题，并提升易读性。</li>
   </ol>
-  <p>如果你在使用 Reset! 时遇到了任何问题，欢迎在 <a href="https://github.com/EEliberto/Reset-macOS/issues">GitHub</a> 提交你的 Issue。</p>
+  <p>Reset! 致力于为你的智能体使用带来更好的体验。如果你在使用 Reset! 时遇到任何问题，请在 <a href="https://github.com/EEliberto/Reset-macOS/issues">GitHub</a> 提交 Issue。</p>
 </body>]]></description>
       <enclosure
-        url="https://github.com/EEliberto/Reset-macOS/releases/download/v270726/Reset-270726.zip"
-        length="6054659"
+        url="https://github.com/EEliberto/Reset-macOS/releases/download/v260904/Reset-260904.zip"
+        length="5757569"
         type="application/octet-stream"
-        sparkle:edSignature="jOI2WkHHGhD7wlD5PQUKwpdjCo+eSO6w5won41+NapuECd37V+mkDq4YCZzg6BHpijqPzi5VnqH/Btv99HDzBQ==" />
+        sparkle:edSignature="H39QlFEytBwXffR3HF6UvMr/l3rPqfgqLsepq9zpxwbqCd4l0l/T9jcrm8qq7+AZpgZi2mbiZG9E+uKldKpEDA==" />
     </item>
   </channel>
 </rss>
