@@ -74,6 +74,13 @@ if [[ ! -d "$APP" ]]; then
   echo "Build failed: missing $APP" >&2
   exit 1
 fi
+
+SHORT_VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"
+BUILD_VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist")"
+if [[ "$SHORT_VERSION" != "$VERSION" ]]; then
+  echo "Version mismatch: release is ${VERSION}, app reports ${SHORT_VERSION}" >&2
+  exit 1
+fi
 codesign --verify --deep --strict --verbose=2 "$APP"
 
 echo "==> Packaging DMG and Sparkle ZIP"
@@ -121,8 +128,8 @@ cat > "$ROOT/appcast.xml" <<EOF
     <item>
       <title>Version ${VERSION}</title>
       <pubDate>${PUB_DATE}</pubDate>
-      <sparkle:version>${VERSION}</sparkle:version>
-      <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+      <sparkle:version>${BUILD_VERSION}</sparkle:version>
+      <sparkle:shortVersionString>${SHORT_VERSION}</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <description><![CDATA[$(sed -n '/<body>/,/<\/body>/p' "$NOTES_HTML")]]></description>
       <enclosure
