@@ -6,26 +6,26 @@
     <description>Reset! Sparkle appcast</description>
     <language>zh-Hans</language>
     <item>
-      <title>Version 260904</title>
-      <pubDate>Fri, 04 Sep 2026 10:00:58 +0000</pubDate>
-      <sparkle:version>20260904</sparkle:version>
-      <sparkle:shortVersionString>260904</sparkle:shortVersionString>
+      <title>Version 260926</title>
+      <pubDate>Sat, 26 Sep 2026 06:55:09 +0000</pubDate>
+      <sparkle:version>20260926</sparkle:version>
+      <sparkle:shortVersionString>260926</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <description><![CDATA[<body>
   <h2>感谢你使用 Reset!</h2>
   <p>本次更新进行了如下更新和修复：</p>
   <ol>
-    <li>由于技术原因，Telegram Bot 功能暂时下线，暂无恢复日期。</li>
-    <li>已为 macOS 27 Golde Gate 准备好！</li>
-    <li>优化和修复了可能出现或者已经出现的 UI 问题，并提升易读性。</li>
+    <li>修复最新版 ChatGPT 无法被识别、误显示为未安装的问题。</li>
+    <li>兼容新旧版 ChatGPT，并增强应用位置或内置程序名称变化时的识别能力。</li>
+    <li>完善 ChatGPT 识别验证，避免将 ChatGPT Classic 误识别为受支持的智能体应用。</li>
   </ol>
   <p>Reset! 致力于为你的智能体使用带来更好的体验。如果你在使用 Reset! 时遇到任何问题，请在 <a href="https://github.com/EEliberto/Reset-macOS/issues">GitHub</a> 提交 Issue。</p>
 </body>]]></description>
       <enclosure
-        url="https://github.com/EEliberto/Reset-macOS/releases/download/v260904/Reset-260904.zip"
-        length="5757569"
+        url="https://github.com/EEliberto/Reset-macOS/releases/download/v260926/Reset-260926.zip"
+        length="5883849"
         type="application/octet-stream"
-        sparkle:edSignature="H39QlFEytBwXffR3HF6UvMr/l3rPqfgqLsepq9zpxwbqCd4l0l/T9jcrm8qq7+AZpgZi2mbiZG9E+uKldKpEDA==" />
+        sparkle:edSignature="IJlO7VlfR4vTlgPvFfUjIc6O+PQ1G8KqPXbcPsHHRFJQE2KdPpIs15Wh1aTvHu4x+rEcPjgqA8MDLW/l0edJAw==" />
     </item>
   </channel>
 </rss>
