@@ -2,6 +2,36 @@ import XCTest
 @testable import Reset
 
 final class ResetTests: XCTestCase {
+    func testChatGPTSupportsNewAndLegacyCLIPaths() {
+        XCTAssertTrue(ProviderKind.chatGPT.applicationPaths.contains("/Applications/ChatGPT.app/Contents/Resources/codex-cli"))
+        XCTAssertTrue(ProviderKind.chatGPT.applicationPaths.contains("/Applications/ChatGPT.app/Contents/Resources/codex"))
+    }
+
+    func testChatGPTDesktopDetectionSurvivesCLIRemovalAndRejectsClassic() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        for (name, identifier, expected) in [
+            ("Renamed", "com.openai.codex", true),
+            ("Classic", "com.openai.chat", false)
+        ] {
+            let app = root.appendingPathComponent("\(name).app")
+            let contents = app.appendingPathComponent("Contents")
+            let executable = contents.appendingPathComponent("MacOS/Desktop")
+            try FileManager.default.createDirectory(at: executable.deletingLastPathComponent(), withIntermediateDirectories: true)
+            let plist = try PropertyListSerialization.data(fromPropertyList: [
+                "CFBundleIdentifier": identifier,
+                "CFBundleExecutable": "Desktop",
+                "CFBundlePackageType": "APPL"
+            ], format: .xml, options: 0)
+            try plist.write(to: contents.appendingPathComponent("Info.plist"))
+            try Data("#!/bin/sh\n".utf8).write(to: executable)
+            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: executable.path)
+            XCTAssertEqual(AgentDetector.desktopExecutablePath(at: app, for: .chatGPT), expected ? executable.path : nil)
+            try FileManager.default.removeItem(at: executable)
+            XCTAssertNil(AgentDetector.desktopExecutablePath(at: app, for: .chatGPT))
+        }
+    }
+
     func testQuotaRemaining() {
         let window = QuotaWindow(utilization: 37, resetsAt: nil, windowSeconds: 300)
         XCTAssertEqual(window.remaining, 63)

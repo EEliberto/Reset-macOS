@@ -78,7 +78,10 @@ enum ProviderKind: String, CaseIterable, Codable, Identifiable, Hashable, Sendab
     var applicationPaths: [String] {
         switch self {
         case .claudeCode: []
-        case .chatGPT: ["/Applications/ChatGPT.app/Contents/Resources/codex"]
+        case .chatGPT: [
+            "/Applications/ChatGPT.app/Contents/Resources/codex-cli",
+            "/Applications/ChatGPT.app/Contents/Resources/codex"
+        ]
         case .cursor: ["/Applications/Cursor.app/Contents/MacOS/Cursor"]
         case .googleAntigravity: [
             "/Applications/Antigravity.app/Contents/MacOS/Antigravity",

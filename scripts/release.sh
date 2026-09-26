@@ -25,6 +25,7 @@ VERSION="${TAG#v}"
 REPO="EEliberto/Reset-macOS"
 DERIVED="/tmp/Reset-Release-${VERSION}"
 STAGE="$(mktemp -d /tmp/reset-dmg.XXXXXX)"
+trap 'rm -rf "$STAGE"' EXIT
 UPDATES="$ROOT/updates"
 DMG_NAME="Reset-${VERSION}.dmg"
 DMG="$UPDATES/$DMG_NAME"
@@ -63,6 +64,7 @@ if ! xcodebuild \
     -configuration Release \
     -destination 'platform=macOS' \
     -derivedDataPath "$DERIVED" \
+    ONLY_ACTIVE_ARCH=NO ARCHS="arm64 x86_64" \
     clean build > "$BUILD_LOG" 2>&1; then
   rg 'error:|warning:|BUILD SUCCEEDED|BUILD FAILED' "$BUILD_LOG" || true
   exit 1
@@ -153,10 +155,12 @@ echo "==> Publishing GitHub Release ${TAG}"
 cp -f "$DMG" "$ROOT/Reset!.dmg"
 if gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
   gh release upload "$TAG" "$DMG" "$ZIP" "$ROOT/appcast.xml" -R "$REPO" --clobber
-  gh release edit "$TAG" -R "$REPO" --title "Reset! ${VERSION}" --notes-file "$NOTES_FILE"
+  gh release edit "$TAG" -R "$REPO" --title "Reset! ${VERSION}" --notes-file "$NOTES_FILE" --latest
 else
   gh release create "$TAG" "$DMG" "$ZIP" "$ROOT/appcast.xml" \
     -R "$REPO" \
+    --target "$(git rev-parse HEAD)" \
+    --latest \
     --title "Reset! ${VERSION}" \
     --notes-file "$NOTES_FILE"
 fi

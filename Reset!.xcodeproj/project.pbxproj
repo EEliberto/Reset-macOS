@@ -305,7 +305,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20260904;
+				CURRENT_PROJECT_VERSION = 20260926;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -313,7 +313,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 260904;
+				MARKETING_VERSION = 260926;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
 				PRODUCT_MODULE_NAME = Reset;
 				PRODUCT_NAME = "Reset!";
@@ -383,7 +383,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20260904;
+				CURRENT_PROJECT_VERSION = 20260926;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -391,7 +391,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 260904;
+				MARKETING_VERSION = 260926;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
 				PRODUCT_MODULE_NAME = Reset;
 				PRODUCT_NAME = "Reset!";

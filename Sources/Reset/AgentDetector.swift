@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 struct AgentDetector: Sendable {
@@ -53,7 +54,27 @@ struct AgentDetector: Sendable {
              "\(home)/.local/bin/\(name)",
              "\(home)/.npm-global/bin/\(name)"]
         } + provider.applicationPaths
-        return candidates.first { FileManager.default.isExecutableFile(atPath: $0) }
+        if let path = candidates.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) {
+            return path
+        }
+        // The desktop app can move or rename its bundled CLI between releases.
+        // Resolve its identity instead of depending on a Resources filename.
+        guard provider == .chatGPT else { return nil }
+        return await MainActor.run {
+            provider.desktopBundleIdentifiers.lazy.compactMap { identifier in
+                guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return nil as String? }
+                return Self.desktopExecutablePath(at: url, for: provider)
+            }.first
+        }
+    }
+
+    static func desktopExecutablePath(at url: URL, for provider: ProviderKind) -> String? {
+        guard let bundle = Bundle(url: url),
+              let identifier = bundle.bundleIdentifier,
+              provider.desktopBundleIdentifiers.contains(identifier),
+              let executable = bundle.executableURL,
+              FileManager.default.isExecutableFile(atPath: executable.path) else { return nil }
+        return executable.path
     }
 
 }

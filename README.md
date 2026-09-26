@@ -40,7 +40,7 @@ SwiftUI 原生菜单栏工具，在本机监控 **Codex（ChatGPT）**、**Claud
 ## 安装
 
 1. 打开 [Releases](https://github.com/EEliberto/Reset-macOS/releases/latest)
-2. 下载 **`Reset-260904.dmg`**
+2. 下载 **`Reset-260926.dmg`**
 3. 将 **Reset!** 拖入 Applications
 
 首次打开若提示未验证开发者：系统设置 → 隐私与安全性 → 仍要打开。
