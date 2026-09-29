@@ -1,50 +1,69 @@
-# Reset! for macOS
+<div align="center">
+  <br>
+  <img src="https://github.com/user-attachments/assets/afd6fcf6-b022-40ab-84b3-720bb6206b85" width="136" alt="Reset! 图标">
+  <h1>Reset!</h1>
+  <h3>在菜单栏查看 AI 服务用量</h3>
+  <p>集中查看常用 AI 编程工具的剩余用量、重置时间和当前状态。</p>
+  <br>
+  <p>
+    <a href="https://github.com/EEliberto/Reset-macOS/releases/latest"><strong>下载 Reset!</strong></a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="RELEASE_NOTES_260926.md">查看新功能</a>
+  </p>
+  <p><sub>需要 macOS 26 或更高版本。</sub></p>
+  <br>
+</div>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/afd6fcf6-b022-40ab-84b3-720bb6206b85" alt="Reset!" width="180" />
+  <img src="https://github.com/user-attachments/assets/135b0a80-5f1a-4fec-9dbf-38b009468cd3" alt="Reset! 主窗口" width="460">
 </p>
 
-<p align="center">
-  <strong>你的 AI Agent 额度一览</strong><br />
-  一眼看清 Codex · Claude Code · Cursor · Antigravity · Kimi 还剩多少额度
-</p>
+<br>
 
-<p align="center">
-  <a href="https://github.com/EEliberto/Reset-macOS/releases/latest"><img src="https://img.shields.io/github/v/release/EEliberto/Reset-macOS?style=flat-square&label=Download" alt="Download" /></a>
-  <a href="https://github.com/EEliberto/Reset-macOS/releases"><img src="https://img.shields.io/github/downloads/EEliberto/Reset-macOS/total?style=flat-square" alt="Downloads" /></a>
-  <img src="https://img.shields.io/badge/macOS-26%2B-black?style=flat-square" alt="macOS" />
-  <img src="https://img.shields.io/badge/SwiftUI-native-orange?style=flat-square" alt="SwiftUI" />
-</p>
+## 用量状态，随时可见
 
----
+Reset! 常驻于 Mac 菜单栏，以简洁的圆环显示当前 AI 服务的剩余用量。打开主窗口，即可查看各项用量限额、重置时间和服务状态，无需在多个 App 与网页之间切换。
 
-SwiftUI 原生菜单栏工具，在本机监控 **Codex（ChatGPT）**、**Claude Code**、**Cursor**、**Google Antigravity / Antigravity IDE** 与 **Kimi** 的额度，并支持 **Grok CLI 本地状态接入**。每个 Agent 都可在设置中单独显示或隐藏。
+## 自动显示正在使用的服务
 
-## 功能
+当你在不同的 AI 编程工具之间切换时，菜单栏图标会自动显示当前服务的用量。你也可以在设置中选择要显示的服务，让 Reset! 只保留与你有关的信息。
 
-| | |
-|---|---|
-| **菜单栏常驻** | 设置窗口 + 圆环进度，当前 Agent 自动切换 |
-| **完全本机运行** | 直接读取本机登录态，不使用云端协调或跨设备同步 |
-| **可选本机通知** | 按用户设置提醒低额度与额度重置 |
-| **Sparkle 更新** | 关于页一键检查，GitHub Release 自动更新 |
+目前支持：
 
-## 主页面
+- Codex（ChatGPT）
+- Claude Code
+- Cursor
+- Google Antigravity 与 Antigravity IDE
+- Kimi
+- Grok CLI 本地状态
 
-实时查看各 AI Agent 额度；菜单栏圆环会随你正在使用的 Agent **自动切换**。
+## 信息留在这台 Mac 上
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/135b0a80-5f1a-4fec-9dbf-38b009468cd3" alt="主页面" width="420" />
-</p>
+Reset! 直接读取各项服务在这台 Mac 上的登录状态和用量信息。数据不会发送到 Reset! 的服务器，也不依赖额外账户或云端协调服务。
 
-## 安装
+## 在合适的时间提醒你
 
-1. 打开 [Releases](https://github.com/EEliberto/Reset-macOS/releases/latest)
-2. 下载 **`Reset-260926.dmg`**
-3. 将 **Reset!** 拖入 Applications
+你可以为低用量和额度重置启用本机通知。Reset! 会按照你的设置发送提醒，也可以完全关闭通知。
 
-首次打开若提示未验证开发者：系统设置 → 隐私与安全性 → 仍要打开。
+## 开始使用
 
-## 致谢
+1. 下载最新的 [Reset! DMG](https://github.com/EEliberto/Reset-macOS/releases/latest)。
+2. 打开磁盘映像，并将 Reset! 拖移到“应用程序”文件夹。
+3. 打开 Reset!，然后从菜单栏选择需要显示的 AI 服务。
 
-见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。自动更新基于 [Sparkle](https://sparkle-project.org/)。
+如果 Mac 阻止首次打开，请前往“系统设置”>“隐私与安全性”，在安全性提示中选择“仍要打开”。
+
+## 自动更新
+
+Reset! 会定期检查新版本。你也可以打开“关于 Reset!”，随时检查更新。自动更新由 [Sparkle](https://sparkle-project.org/) 提供支持。
+
+## 从源码构建
+
+项目使用 SwiftUI 和 Swift 6 构建。使用 Xcode 打开 `Reset!.xcodeproj`，然后运行 `Reset` scheme。
+
+<br>
+
+<div align="center">
+  <p><a href="https://github.com/EEliberto/Reset-macOS/issues">报告问题</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="THIRD_PARTY_NOTICES.md">第三方软件声明</a></p>
+  <sub>Reset! 与文中提及的 AI 服务及其开发者无隶属关系。相关名称和商标归各自所有者所有。</sub>
+</div>
