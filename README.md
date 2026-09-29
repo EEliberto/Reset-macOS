@@ -2,8 +2,8 @@
   <br>
   <img src="https://github.com/user-attachments/assets/afd6fcf6-b022-40ab-84b3-720bb6206b85" width="136" alt="Reset! 图标">
   <h1>Reset!</h1>
-  <h3>在菜单栏查看 AI 服务用量</h3>
-  <p>集中查看常用 AI 编程工具的剩余用量、重置时间和当前状态。</p>
+  <h3>在菜单栏查看 AI 智能体用量</h3>
+  <p>集中查看常用 AI 智能体的剩余用量、重置时间和当前状态。</p>
   <br>
   <p>
     <a href="https://github.com/EEliberto/Reset-macOS/releases/latest"><strong>下载 Reset!</strong></a>
@@ -22,11 +22,11 @@
 
 ## 用量状态，随时可见
 
-Reset! 常驻于 Mac 菜单栏，以简洁的圆环显示当前 AI 服务的剩余用量。打开主窗口，即可查看各项用量限额、重置时间和服务状态，无需在多个 App 与网页之间切换。
+Reset! 常驻于 Mac 菜单栏，以简洁的圆环显示当前 AI 智能体的剩余用量。打开主窗口，即可查看各项用量限额、重置时间和服务状态，无需在多个 App 与网页之间切换。
 
 ## 自动显示正在使用的服务
 
-当你在不同的 AI 编程工具之间切换时，菜单栏图标会自动显示当前服务的用量。你也可以在设置中选择要显示的服务，让 Reset! 只保留与你有关的信息。
+当你在不同的 AI 智能体之间切换时，菜单栏图标会自动显示当前服务的用量。你也可以在设置中选择要显示的智能体，让 Reset! 只保留与你有关的信息。
 
 目前支持：
 
@@ -49,7 +49,7 @@ Reset! 直接读取各项服务在这台 Mac 上的登录状态和用量信息�
 
 1. 下载最新的 [Reset! DMG](https://github.com/EEliberto/Reset-macOS/releases/latest)。
 2. 打开磁盘映像，并将 Reset! 拖移到“应用程序”文件夹。
-3. 打开 Reset!，然后从菜单栏选择需要显示的 AI 服务。
+3. 打开 Reset!，然后从菜单栏选择需要显示的 AI 智能体。
 
 如果 Mac 阻止首次打开，请前往“系统设置”>“隐私与安全性”，在安全性提示中选择“仍要打开”。
 
@@ -59,7 +59,7 @@ Reset! 会定期检查新版本。你也可以打开“关于 Reset!”，随时
 
 ## 从源码构建
 
-项目使用 SwiftUI 和 Swift 6 构建。使用 Xcode 打开 `Reset!.xcodeproj`，然后运行 `Reset` scheme。
+项目使用 SwiftUI 和 Swift 6 构建。使用 Xcode 打开 `Reset!.xcodeproj`，然后运行 `Reset` 方案。
 
 <br>
 
