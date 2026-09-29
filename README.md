@@ -2,7 +2,7 @@
   <br>
   <img src="https://github.com/user-attachments/assets/afd6fcf6-b022-40ab-84b3-720bb6206b85" width="136" alt="Reset! 图标">
   <h1>Reset!</h1>
-  <h3>在菜单栏查看 AI 智能体用量</h3>
+  <h3>在 Mac 菜单栏实时查看 AI 智能体用量</h3>
   <p>集中查看常用 AI 智能体的剩余用量、重置时间和当前状态。</p>
   <br>
   <p>
