@@ -5,6 +5,7 @@ struct AntigravityQuotaClient {
         let pid: Int32
         let port: Int
         let csrfToken: String
+        var scheme: String = "https"
     }
 
     private let fileManager = FileManager.default
@@ -12,7 +13,7 @@ struct AntigravityQuotaClient {
     func fetch() async throws -> ProviderUsage {
         var lastError: Error?
         do {
-            for connection in try discoverConnections() {
+            for connection in try await discoverConnections() {
                 do {
                     let summary = try await request(
                         connection: connection,
@@ -49,20 +50,32 @@ struct AntigravityQuotaClient {
         if let cached = cachedUsage() {
             return cached
         }
-        throw lastError ?? UsageReadError.unavailable("Antigravity 本机额度服务不可用")
+        throw lastError ?? UsageReadError.unavailable("Gemini 本机额度服务不可用")
     }
 
-    func discoverConnections() throws -> [Connection] {
+    func discoverConnections() async throws -> [Connection] {
         guard let processList = command("/bin/ps", ["-ax", "-o", "pid=,command="]) else {
-            throw UsageReadError.unavailable("无法枚举 Antigravity 进程")
+            throw UsageReadError.unavailable("无法枚举 Gemini 进程")
         }
         var results: [Connection] = []
+        var hubError: Error?
         for line in processList.split(separator: "\n").map(String.init) {
-            let lower = line.lowercased()
-            guard (lower.contains("/antigravity.app/") || lower.contains("/antigravity ide.app/")),
-                  lower.contains("language_server") || lower.contains("language-server") else { continue }
             let fields = line.split(whereSeparator: \.isWhitespace)
-            guard let pid = fields.first.flatMap({ Int32($0) }),
+            guard let pid = fields.first.flatMap({ Int32($0) }) else { continue }
+            if let port = Self.geminiHubPort(in: line), listeningPorts(pid: pid).contains(port) {
+                do {
+                    var request = URLRequest(url: URL(string: "http://127.0.0.1:\(port)/")!)
+                    request.timeoutInterval = 4
+                    let (data, response) = try await LocalAntigravitySession.shared.data(for: request)
+                    guard (response as? HTTPURLResponse)?.statusCode == 200,
+                          let token = Self.hubCSRFToken(in: data) else {
+                        throw UsageReadError.unavailable("无法读取 Gemini 本机会话，请重新打开 Gemini")
+                    }
+                    results.append(Connection(pid: pid, port: port, csrfToken: token, scheme: "http"))
+                } catch { hubError = error }
+                continue
+            }
+            guard Self.isLegacyLanguageServer(line),
                   let token = Self.flagValue("--csrf_token", in: line),
                   !token.isEmpty else { continue }
             for port in listeningPorts(pid: pid) {
@@ -74,13 +87,38 @@ struct AntigravityQuotaClient {
             return $0.port < $1.port
         }
         guard !results.isEmpty else {
-            throw UsageReadError.unavailable("请保持 Antigravity 或 Antigravity IDE 在后台运行")
+            throw hubError ?? UsageReadError.unavailable("请在 Gemini 中打开智能体工作区，并保持 App 在后台运行")
         }
         return results
     }
 
+    static func geminiHubPort(in command: String) -> Int? {
+        let lower = command.lowercased()
+        guard lower.contains("/gemini.app/contents/helpers/agy "),
+              command.split(whereSeparator: \.isWhitespace).contains("--hub"),
+              let rawPort = flagValue("--hub-port", in: command),
+              let port = Int(rawPort), (1...65535).contains(port) else { return nil }
+        return port
+    }
+
+    static func isLegacyLanguageServer(_ command: String) -> Bool {
+        let lower = command.lowercased()
+        return ["/antigravity.app/", "/antigravity ide.app/", "/gemini.app/"].contains(where: lower.contains)
+            && (lower.contains("language_server") || lower.contains("language-server"))
+    }
+
+    static func hubCSRFToken(in data: Data) -> String? {
+        guard let html = String(data: data, encoding: .utf8),
+              let regex = try? NSRegularExpression(pattern: #"__APP_CONFIG__\s*=\s*(\{[^\n]*?\})\s*;"#),
+              let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
+              let range = Range(match.range(at: 1), in: html),
+              let config = try? JSONSerialization.jsonObject(with: Data(html[range].utf8)) as? [String: Any],
+              let token = config["csrfToken"] as? String, !token.isEmpty else { return nil }
+        return token
+    }
+
     private func request(connection: Connection, path: String, body: Data) async throws -> Data {
-        var request = URLRequest(url: URL(string: "https://127.0.0.1:\(connection.port)/\(path)")!)
+        var request = URLRequest(url: URL(string: "\(connection.scheme)://127.0.0.1:\(connection.port)/\(path)")!)
         request.httpMethod = "POST"
         request.timeoutInterval = 6
         request.httpBody = body
@@ -89,13 +127,13 @@ struct AntigravityQuotaClient {
         request.setValue(connection.csrfToken, forHTTPHeaderField: "X-Codeium-Csrf-Token")
         let (data, response) = try await LocalAntigravitySession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse else {
-            throw UsageReadError.unavailable("Antigravity 本机服务没有响应")
+            throw UsageReadError.unavailable("Gemini 本机服务没有响应")
         }
         if http.statusCode == 429 {
-            throw UsageReadError.unavailable("Antigravity 请求过于频繁，请稍后重试")
+            throw UsageReadError.unavailable("Gemini 请求过于频繁，请稍后重试")
         }
         guard (200..<300).contains(http.statusCode) else {
-            throw UsageReadError.unavailable("Antigravity 本机接口 HTTP \(http.statusCode)")
+            throw UsageReadError.unavailable("Gemini 本机接口 HTTP \(http.statusCode)")
         }
         return data
     }
@@ -115,7 +153,7 @@ struct AntigravityQuotaClient {
             return QuotaGroup(name: raw.displayName, fiveHour: five, sevenDay: weekly)
         }
         guard !groups.isEmpty else {
-            throw UsageReadError.invalidResponse("Antigravity 没有返回可识别的额度窗口")
+            throw UsageReadError.invalidResponse("Gemini 没有返回可识别的额度窗口")
         }
         return ProviderUsage(
             provider: .googleAntigravity,

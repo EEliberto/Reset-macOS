@@ -76,8 +76,6 @@ final class AppModel: ObservableObject {
     @Published private(set) var activeProvider: ProviderKind?
     @Published var deviceNotificationsEnabled = false
     @Published private(set) var enabledProviders: [ProviderKind: Bool]
-    @Published var grokBuildIntegrationEnabled = false
-    @Published private(set) var buildIntegrationStatuses: [BuildIntegrationStatus] = []
     @Published var launchAtLoginEnabled = false
     @Published private(set) var launchAtLoginRequiresApproval = false
     @Published var message = "准备就绪"
@@ -86,10 +84,7 @@ final class AppModel: ObservableObject {
 
     private let detector = AgentDetector()
     private let deviceNotifications = DeviceNotificationClient()
-    private let buildIntegrationMonitor = BuildIntegrationMonitor()
     private var autoRefreshTask: Task<Void, Never>?
-    private var buildIntegrationTask: Task<Void, Never>?
-    private var grokEventOffset: UInt64 = 0
     private var refreshPending = false
     private let observerStore = AppModelObserverStore()
     private var pendingResetEvents: [ResetEvent]
@@ -97,7 +92,6 @@ final class AppModel: ObservableObject {
     private static let deviceNotificationsKey = "deviceNotificationsEnabled"
     private static let providerEnabledKeyPrefix = "providerEnabled."
     private static let lowQuotaStateKeyPrefix = "lowQuotaState."
-    private static let grokBuildIntegrationKey = "buildIntegration.grokBuild.enabled"
     private static let pendingResetEventsKey = "pendingResetEvents"
     private static let scheduledDeviceResetNotificationsKey = "scheduledDeviceResetNotifications"
     private static let lastActiveProviderKey = "lastActiveProvider"
@@ -115,7 +109,6 @@ final class AppModel: ObservableObject {
             return (provider, defaults.object(forKey: key) as? Bool ?? true)
         })
         deviceNotificationsEnabled = UserDefaults.standard.bool(forKey: Self.deviceNotificationsKey)
-        grokBuildIntegrationEnabled = defaults.bool(forKey: Self.grokBuildIntegrationKey)
         launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
         launchAtLoginRequiresApproval = SMAppService.mainApp.status == .requiresApproval
         let rememberedProvider = defaults.string(forKey: Self.lastActiveProviderKey).flatMap(ProviderKind.init(rawValue:))
@@ -153,15 +146,13 @@ final class AppModel: ObservableObject {
                 try? await Task.sleep(for: .seconds(60))
             }
         }
-        if grokBuildIntegrationEnabled {
-            try? buildIntegrationMonitor.setGrokHookEnabled(true)
-        }
-        grokEventOffset = buildIntegrationMonitor.currentGrokEventOffset()
-        buildIntegrationTask = Task { [weak self] in
-            while !Task.isCancelled {
-                await self?.pollBuildIntegrations()
-                try? await Task.sleep(for: .seconds(3))
-            }
+        // Retire only Reset!'s own hook, leaving unrelated Grok configuration alone.
+        try? RetiredIntegrationCleanup.removeGrokHook()
+        defaults.removeObject(forKey: "buildIntegration.grokBuild.enabled")
+        pendingResetEvents.removeAll { ["Kimi", "Antigravity"].contains($0.providerName) }
+        savePendingResetEvents()
+        Task {
+            await deviceNotifications.cancelResetNotifications(identifierPrefixes: ["reset.Kimi.", "reset.Antigravity."])
         }
         UserDefaults.standard.removeObject(forKey: "usageHistory.v1")
         _ = SparkleUpdateController.shared
@@ -169,12 +160,10 @@ final class AppModel: ObservableObject {
 
     deinit {
         autoRefreshTask?.cancel()
-        buildIntegrationTask?.cancel()
     }
 
     func quitApplication() {
         autoRefreshTask?.cancel()
-        buildIntegrationTask?.cancel()
         NSApplication.shared.terminate(nil)
     }
 
@@ -197,60 +186,6 @@ final class AppModel: ObservableObject {
 
     func openLoginItemsSettings() {
         SMAppService.openSystemSettingsLoginItems()
-    }
-
-    func setBuildIntegration(_ integration: BuildIntegrationKind, enabled: Bool) {
-        Task {
-            do {
-                try buildIntegrationMonitor.setGrokHookEnabled(enabled)
-                grokBuildIntegrationEnabled = enabled
-                UserDefaults.standard.set(enabled, forKey: Self.grokBuildIntegrationKey)
-                grokEventOffset = buildIntegrationMonitor.currentGrokEventOffset()
-                updateBuildIntegrationStatus(integration, event: nil)
-            } catch {
-                grokBuildIntegrationEnabled = false
-                UserDefaults.standard.set(false, forKey: Self.grokBuildIntegrationKey)
-                message = "Grok CLI 接入失败：\(error.localizedDescription)"
-            }
-        }
-    }
-
-    private func pollBuildIntegrations() async {
-        if grokBuildIntegrationEnabled {
-            let batch = buildIntegrationMonitor.grokEvents(fromOffset: grokEventOffset)
-            grokEventOffset = batch.nextOffset
-            if let event = batch.events.last {
-                updateBuildIntegrationStatus(.grokBuild, event: event)
-            }
-        } else {
-            grokEventOffset = buildIntegrationMonitor.currentGrokEventOffset()
-        }
-    }
-
-    private func updateBuildIntegrationStatus(_ integration: BuildIntegrationKind, event: BuildIntegrationEvent?) {
-        let status = BuildIntegrationStatus(
-            integration: integration,
-            state: event?.state,
-            observedAt: event?.observedAt,
-            summary: event?.summary
-        )
-        if let index = buildIntegrationStatuses.firstIndex(where: { $0.integration == integration }) {
-            if event != nil {
-                buildIntegrationStatuses[index] = status
-            } else {
-                buildIntegrationStatuses.remove(at: index)
-            }
-        } else if event != nil {
-            buildIntegrationStatuses.append(status)
-        }
-    }
-
-    var visibleBuildIntegrations: [BuildIntegrationStatus] {
-        BuildIntegrationKind.allCases.compactMap { integration in
-            guard grokBuildIntegrationEnabled else { return nil }
-            return buildIntegrationStatuses.first(where: { $0.integration == integration })
-                ?? BuildIntegrationStatus(integration: integration, state: nil, observedAt: nil, summary: nil)
-        }
     }
 
     func providerEnabled(_ provider: ProviderKind) -> Bool {
@@ -384,7 +319,7 @@ final class AppModel: ObservableObject {
             .compactMap { provider in statuses.first(where: { $0.provider == provider }) }
     }
 
-    private static let defaultProviderOrder: [ProviderKind] = [.chatGPT, .googleAntigravity, .kimiCode, .claudeCode, .cursor]
+    private static let defaultProviderOrder: [ProviderKind] = [.chatGPT, .googleAntigravity, .claudeCode, .cursor]
     private static let orderKey = "providerOrder"
     private static let activityScoresKey = "providerActivityScores"
 
@@ -483,8 +418,13 @@ final class AppModel: ObservableObject {
         case .chatGPT: paths = ["/Applications/ChatGPT.app"]
         case .cursor: paths = ["/Applications/Cursor.app"]
         case .googleAntigravity:
-            paths = ["/Applications/Antigravity.app", "/Applications/Antigravity IDE.app"]
-        case .kimiCode: paths = ["/Applications/Kimi.app", "/System/Applications/Utilities/Terminal.app"]
+            paths = ["/Applications/Gemini.app", "/Applications/Antigravity.app", "/Applications/Antigravity IDE.app"]
+            if let url = provider.desktopBundleIdentifiers.compactMap({
+                NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0)
+            }).first {
+                NSWorkspace.shared.open(url)
+                return
+            }
         case .claudeCode: paths = ["/System/Applications/Utilities/Terminal.app"]
         }
         guard let path = paths.first(where: { FileManager.default.fileExists(atPath: $0) }) else {

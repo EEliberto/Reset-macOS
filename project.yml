@@ -23,13 +23,10 @@ targets:
       - path: Reset!.icon
         buildPhase: resources
     resources:
-      - path: Resources/AgentIcons/antigravity.png
-      - path: Resources/AgentIcons/antigravity-ide.png
+      - path: Resources/AgentIcons/gemini.png
       - path: Resources/AgentIcons/chatgpt.png
       - path: Resources/AgentIcons/claude.png
       - path: Resources/AgentIcons/cursor.png
-      - path: Resources/AgentIcons/grok-build.png
-      - path: Resources/AgentIcons/kimi.png
     dependencies:
       - package: Sparkle
         product: Sparkle
@@ -47,8 +44,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.reset.app
         PRODUCT_NAME: Reset!
         PRODUCT_MODULE_NAME: Reset
-        MARKETING_VERSION: "260926"
-        CURRENT_PROJECT_VERSION: "20260926"
+        MARKETING_VERSION: "261021"
+        CURRENT_PROJECT_VERSION: "20261021"
         ASSETCATALOG_COMPILER_APPICON_NAME: Reset!
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_NSHumanReadableCopyright: ""

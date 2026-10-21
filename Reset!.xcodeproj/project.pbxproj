@@ -7,27 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		03E5A3FAFE0D15E9FDDD5E55 /* kimi.png in Resources */ = {isa = PBXBuildFile; fileRef = 10A47A2E9B3C09B9D10160F1 /* kimi.png */; };
 		0BBEF23CB69A0231D6CCF410 /* claude.png in Resources */ = {isa = PBXBuildFile; fileRef = DEF8024796D0E6F8CA44400F /* claude.png */; };
 		104FE838CAE2AE508EE87FD1 /* ResetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8F0CEC2AABE946937001F7 /* ResetApp.swift */; };
-		278F0B4F4F1DE34308ADB3EB /* grok-build.png in Resources */ = {isa = PBXBuildFile; fileRef = 829FDBBD702941D8A7948119 /* grok-build.png */; };
+		276C6DEFE8A15CD963CCC09E /* gemini.png in Resources */ = {isa = PBXBuildFile; fileRef = FD57150A6523AF984A65C426 /* gemini.png */; };
 		28FA5F63A78D9D43236032B9 /* ResetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E485CE38F62964FB159B0E /* ResetTests.swift */; };
 		2AD6D8AD8461318F9529204D /* cursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 420DF5EB8995C6CD8CC9E9C6 /* cursor.png */; };
 		2B812CEF84A82EC775DFAC9B /* SparkleUpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */; };
 		4295C2979A60435F29C3001F /* LiveUsageReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */; };
 		4F2496BBEF176F4A77649319 /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */; };
 		54BE50FD13765EA7B0E65B0C /* chatgpt.png in Resources */ = {isa = PBXBuildFile; fileRef = 079344D730F4B7A4CC2C197B /* chatgpt.png */; };
-		7676951A132D6F795C847771 /* BuildIntegrationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3244D8426577ADE2C280B2D7 /* BuildIntegrationMonitor.swift */; };
+		74CC7DBB0AE53680FB3CE124 /* RetiredIntegrationCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DECE246CB2C39B88D7146 /* RetiredIntegrationCleanup.swift */; };
 		8A0F4A36EA37F235D02741EB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = B333E9656CCD5AFC0C33A580 /* Sparkle */; };
 		8FF8BE10C17D4A417BE54089 /* AntigravityQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */; };
-		914781E4AE7F4B7A5C938178 /* antigravity-ide.png in Resources */ = {isa = PBXBuildFile; fileRef = 0153D7FF565673259671E404 /* antigravity-ide.png */; };
 		A4C69CBC4C1C671EC2FBEAF4 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DB05AAAC33AFE67BED3ACC /* Views.swift */; };
 		ADE35138CA6DC7BEFB3A98E5 /* Reset!.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1EF882BF2AD24B7B6649A311 /* Reset!.icon */; };
 		B899DA3426530BDF9CFC5B05 /* AgentActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */; };
-		BD2ED875B8096902F4D30309 /* antigravity.png in Resources */ = {isa = PBXBuildFile; fileRef = 90B8E2CFEC8F4CF138C0C025 /* antigravity.png */; };
 		C045EA2B9666D47379226CCA /* AgentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6A1D81DB625DAD89592A9E /* AgentDetector.swift */; };
 		C8EB0C6C38A196D6C74ED76C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B0906A8357F5CE034CF4E7 /* Models.swift */; };
-		E76452A81A7C7E01A2CD3AC3 /* KimiQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECD1E60FBE495BA95D4356B /* KimiQuotaClient.swift */; };
 		F0A5EC30AF16A98E47F3823B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A858BCAC78743CE717C827 /* AppModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,28 +38,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0153D7FF565673259671E404 /* antigravity-ide.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "antigravity-ide.png"; sourceTree = "<group>"; };
 		079344D730F4B7A4CC2C197B /* chatgpt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chatgpt.png; sourceTree = "<group>"; };
-		10A47A2E9B3C09B9D10160F1 /* kimi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = kimi.png; sourceTree = "<group>"; };
 		1EF882BF2AD24B7B6649A311 /* Reset!.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = "Reset!.icon"; sourceTree = "<group>"; };
 		1FE6AB0582290EBE3596AB5A /* Reset.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reset.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3244D8426577ADE2C280B2D7 /* BuildIntegrationMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildIntegrationMonitor.swift; sourceTree = "<group>"; };
 		420DF5EB8995C6CD8CC9E9C6 /* cursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor.png; sourceTree = "<group>"; };
 		49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleUpdateController.swift; sourceTree = "<group>"; };
 		6381260A08CFE9ED56343B0D /* AgentActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityMonitor.swift; sourceTree = "<group>"; };
 		64DB05AAAC33AFE67BED3ACC /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; };
-		829FDBBD702941D8A7948119 /* grok-build.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grok-build.png"; sourceTree = "<group>"; };
-		90B8E2CFEC8F4CF138C0C025 /* antigravity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = antigravity.png; sourceTree = "<group>"; };
+		8F1DECE246CB2C39B88D7146 /* RetiredIntegrationCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetiredIntegrationCleanup.swift; sourceTree = "<group>"; };
 		94A858BCAC78743CE717C827 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		AF6A1D81DB625DAD89592A9E /* AgentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetector.swift; sourceTree = "<group>"; };
 		C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityQuotaClient.swift; sourceTree = "<group>"; };
 		C2B0906A8357F5CE034CF4E7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
-		CECD1E60FBE495BA95D4356B /* KimiQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KimiQuotaClient.swift; sourceTree = "<group>"; };
 		D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
 		D51C586380B7A069BF401621 /* ResetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEF8024796D0E6F8CA44400F /* claude.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = claude.png; sourceTree = "<group>"; };
 		E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveUsageReader.swift; sourceTree = "<group>"; };
 		E2E485CE38F62964FB159B0E /* ResetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetTests.swift; sourceTree = "<group>"; };
+		FD57150A6523AF984A65C426 /* gemini.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gemini.png; sourceTree = "<group>"; };
 		FE8F0CEC2AABE946937001F7 /* ResetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -87,11 +79,10 @@
 				C25AC387EE20FC4873DF5E39 /* AntigravityQuotaClient.swift */,
 				94A858BCAC78743CE717C827 /* AppModel.swift */,
 				D38251CE6983F5624BD8E6E5 /* AppUpdateChecker.swift */,
-				3244D8426577ADE2C280B2D7 /* BuildIntegrationMonitor.swift */,
-				CECD1E60FBE495BA95D4356B /* KimiQuotaClient.swift */,
 				E2137AC3DA6C56F5CBBB6F77 /* LiveUsageReader.swift */,
 				C2B0906A8357F5CE034CF4E7 /* Models.swift */,
 				FE8F0CEC2AABE946937001F7 /* ResetApp.swift */,
+				8F1DECE246CB2C39B88D7146 /* RetiredIntegrationCleanup.swift */,
 				49E92D0E817DC7E5C7796D8F /* SparkleUpdateController.swift */,
 				64DB05AAAC33AFE67BED3ACC /* Views.swift */,
 			);
@@ -153,13 +144,10 @@
 		FA3284F77EFA8790FD49D8A8 /* AgentIcons */ = {
 			isa = PBXGroup;
 			children = (
-				0153D7FF565673259671E404 /* antigravity-ide.png */,
-				90B8E2CFEC8F4CF138C0C025 /* antigravity.png */,
 				079344D730F4B7A4CC2C197B /* chatgpt.png */,
 				DEF8024796D0E6F8CA44400F /* claude.png */,
 				420DF5EB8995C6CD8CC9E9C6 /* cursor.png */,
-				829FDBBD702941D8A7948119 /* grok-build.png */,
-				10A47A2E9B3C09B9D10160F1 /* kimi.png */,
+				FD57150A6523AF984A65C426 /* gemini.png */,
 			);
 			path = AgentIcons;
 			sourceTree = "<group>";
@@ -248,13 +236,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADE35138CA6DC7BEFB3A98E5 /* Reset!.icon in Resources */,
-				914781E4AE7F4B7A5C938178 /* antigravity-ide.png in Resources */,
-				BD2ED875B8096902F4D30309 /* antigravity.png in Resources */,
 				54BE50FD13765EA7B0E65B0C /* chatgpt.png in Resources */,
 				0BBEF23CB69A0231D6CCF410 /* claude.png in Resources */,
 				2AD6D8AD8461318F9529204D /* cursor.png in Resources */,
-				278F0B4F4F1DE34308ADB3EB /* grok-build.png in Resources */,
-				03E5A3FAFE0D15E9FDDD5E55 /* kimi.png in Resources */,
+				276C6DEFE8A15CD963CCC09E /* gemini.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,11 +263,10 @@
 				8FF8BE10C17D4A417BE54089 /* AntigravityQuotaClient.swift in Sources */,
 				F0A5EC30AF16A98E47F3823B /* AppModel.swift in Sources */,
 				4F2496BBEF176F4A77649319 /* AppUpdateChecker.swift in Sources */,
-				7676951A132D6F795C847771 /* BuildIntegrationMonitor.swift in Sources */,
-				E76452A81A7C7E01A2CD3AC3 /* KimiQuotaClient.swift in Sources */,
 				4295C2979A60435F29C3001F /* LiveUsageReader.swift in Sources */,
 				C8EB0C6C38A196D6C74ED76C /* Models.swift in Sources */,
 				104FE838CAE2AE508EE87FD1 /* ResetApp.swift in Sources */,
+				74CC7DBB0AE53680FB3CE124 /* RetiredIntegrationCleanup.swift in Sources */,
 				2B812CEF84A82EC775DFAC9B /* SparkleUpdateController.swift in Sources */,
 				A4C69CBC4C1C671EC2FBEAF4 /* Views.swift in Sources */,
 			);
@@ -305,7 +289,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20260926;
+				CURRENT_PROJECT_VERSION = 20261021;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -313,7 +297,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 260926;
+				MARKETING_VERSION = 261021;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
 				PRODUCT_MODULE_NAME = Reset;
 				PRODUCT_NAME = "Reset!";
@@ -383,7 +367,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Reset!";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20260926;
+				CURRENT_PROJECT_VERSION = 20261021;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -391,7 +375,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 260926;
+				MARKETING_VERSION = 261021;
 				PRODUCT_BUNDLE_IDENTIFIER = com.reset.app;
 				PRODUCT_MODULE_NAME = Reset;
 				PRODUCT_NAME = "Reset!";

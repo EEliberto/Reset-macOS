@@ -31,7 +31,7 @@ struct MenuBarView: View {
     private var dashboard: some View {
         ScrollView(.vertical) {
             Group {
-                if model.statuses.isEmpty && model.visibleBuildIntegrations.isEmpty {
+                if model.statuses.isEmpty {
                     VStack(spacing: 10) {
                         ProgressView()
                         Text(model.isRefreshing ? "正在读取 Agent 与额度…" : "正在准备 Agent 状态…")
@@ -45,12 +45,9 @@ struct MenuBarView: View {
                             ForEach(model.visibleStatuses) { status in
                                 QuotaCard(status: status) { model.openAgent(status.provider) }
                             }
-                            ForEach(model.visibleBuildIntegrations) { status in
-                                BuildIntegrationCard(status: status)
-                            }
                         }
                     }
-                    .padding(.vertical, 8)
+                    .padding(.top, 8)
                     .background {
                         GeometryReader { proxy in
                             Color.clear.preference(
@@ -252,11 +249,6 @@ struct QuotaCard: View {
                     if let api = usage.displayableAPIWindow {
                         QuotaMetric(title: "API 额度", window: api, tint: tint, gradient: tintGradient)
                     }
-                    if status.provider == .kimiCode,
-                       let balance = usage.extraUsageBalance,
-                       let currency = usage.extraUsageCurrency {
-                        KimiExtraUsageRow(balance: balance, currency: currency)
-                    }
                 } else {
                     let summary = usage.groups.compactSummary
                     QuotaMetric(title: "模型额度（\(usage.groups.count) 个模型）", window: summary.window, tint: tint, gradient: tintGradient)
@@ -303,27 +295,6 @@ struct QuotaCard: View {
     }
 }
 
-private struct KimiExtraUsageRow: View {
-    let balance: Double
-    let currency: String
-
-    private var formattedBalance: String {
-        let code = currency.uppercased()
-        let symbol = code == "CNY" ? "¥" : (code == "USD" ? "$" : "\(code) ")
-        return "\(symbol)\(balance.formatted(.number.precision(.fractionLength(2))))"
-    }
-
-    var body: some View {
-        HStack {
-            Text("额外用量余额")
-                .font(.caption.weight(.medium))
-                .foregroundStyle(.secondary)
-            Spacer()
-            Text(formattedBalance)
-                .font(.caption.monospacedDigit().weight(.semibold))
-        }
-    }
-}
 
 private func antigravityGroupOrder(_ lhs: QuotaGroup, _ rhs: QuotaGroup) -> Bool {
     func rank(_ name: String) -> Int {
@@ -767,12 +738,6 @@ struct SettingsView: View {
                                 ProviderIntegrationLabel(provider: provider)
                             }
                         }
-                        Toggle(isOn: Binding(
-                            get: { model.grokBuildIntegrationEnabled },
-                            set: { model.setBuildIntegration(.grokBuild, enabled: $0) }
-                        )) {
-                            BuildIntegrationLabel(integration: .grokBuild)
-                        }
                     } header: {
                         Text("Agent 接入")
                     }
@@ -893,55 +858,6 @@ struct SettingsView: View {
     }
 }
 
-private struct BuildIntegrationCard: View {
-    let status: BuildIntegrationStatus
-
-    private var stateTitle: String {
-        switch status.state {
-        case .running: "正在执行"
-        case .completed: "刚刚完成"
-        case .failed: "任务失败"
-        case nil: "等待活动"
-        }
-    }
-
-    private var stateSymbol: String {
-        switch status.state {
-        case .running: "bolt.circle.fill"
-        case .completed: "checkmark.circle.fill"
-        case .failed: "exclamationmark.circle.fill"
-        case nil: "clock"
-        }
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                BuildIntegrationIcon(integration: status.integration, size: 38)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(status.integration.title).font(.headline.weight(.semibold))
-                    Text(status.integration.company).font(.caption2).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Label(stateTitle, systemImage: stateSymbol)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(status.state == .failed ? .red : .secondary)
-            }
-            if let summary = status.summary, !summary.isEmpty {
-                Text(summary)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            } else {
-                Text(status.observedAt.map { "最近活动：\(chineseDateTime($0))" } ?? "等待本地 Agent 活动")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(14)
-        .quotaGlass(cornerRadius: 12)
-    }
-}
 
 private struct DashboardCardsHeightKey: PreferenceKey {
     static let defaultValue: CGFloat = 0
@@ -957,22 +873,6 @@ private struct DashboardHeaderHeightKey: PreferenceKey {
     }
 }
 
-private struct BuildIntegrationLabel: View {
-    let integration: BuildIntegrationKind
-
-    var body: some View {
-        HStack(spacing: 10) {
-            BuildIntegrationIcon(integration: integration, size: 30)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(integration.title)
-                Text(integration.detail)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-}
 
 private struct ProviderIntegrationLabel: View {
     let provider: ProviderKind
@@ -980,37 +880,11 @@ private struct ProviderIntegrationLabel: View {
     var body: some View {
         HStack(spacing: 10) {
             AgentIcon(provider: provider, size: 30)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(provider.title)
-                Text("启用额度查询、主页显示与提醒")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Text(provider.title)
         }
     }
 }
 
-private struct BuildIntegrationIcon: View {
-    let integration: BuildIntegrationKind
-    let size: CGFloat
-
-    var body: some View {
-        Group {
-            if let url = Bundle.main.url(
-                forResource: integration.iconResource,
-                withExtension: "png",
-                subdirectory: "AgentIcons"
-            ) ?? Bundle.main.url(forResource: integration.iconResource, withExtension: "png"),
-               let image = NSImage(contentsOf: url) {
-                Image(nsImage: image).resizable().scaledToFit()
-            } else {
-                Image(systemName: "terminal").resizable().scaledToFit().padding(5)
-            }
-        }
-        .frame(width: size, height: size)
-        .clipShape(RoundedRectangle(cornerRadius: size * 0.23, style: .continuous))
-    }
-}
 
 private struct SettingsNavigationButtons: View {
     let canGoBack: Bool

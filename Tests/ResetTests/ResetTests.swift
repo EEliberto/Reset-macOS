@@ -32,6 +32,57 @@ final class ResetTests: XCTestCase {
         }
     }
 
+    func testGeminiKeepsLegacyIdentityAndSupportsBothApps() throws {
+        let provider = ProviderKind.googleAntigravity
+        XCTAssertEqual(provider.title, "Gemini")
+        XCTAssertEqual(provider.iconResource, "gemini")
+        XCTAssertEqual(try JSONDecoder().decode(ProviderKind.self, from: Data(#""antigravity""#.utf8)), provider)
+        XCTAssertTrue(provider.applicationPaths.contains("/Applications/Gemini.app/Contents/MacOS/Gemini"))
+        XCTAssertTrue(provider.applicationPaths.contains("/Applications/Antigravity.app/Contents/MacOS/Antigravity"))
+        XCTAssertTrue(provider.desktopBundleIdentifiers.contains("com.google.GeminiMacOS"))
+        XCTAssertEqual(Set(ProviderKind.allCases.map(\.rawValue)), ["chatgpt", "cc", "cursor", "antigravity"])
+    }
+
+    func testGeminiHubDiscoveryRejectsUnrelatedProcessesAndInvalidPorts() {
+        let prefix = "123 /Applications/Gemini.app/Contents/Helpers/agy --hub "
+        XCTAssertEqual(AntigravityQuotaClient.geminiHubPort(in: prefix + "--hub-port=52078"), 52078)
+        XCTAssertEqual(AntigravityQuotaClient.geminiHubPort(in: prefix + "--hub-port 52078"), 52078)
+        XCTAssertNil(AntigravityQuotaClient.geminiHubPort(in: prefix + "--hub-port=70000"))
+        XCTAssertNil(AntigravityQuotaClient.geminiHubPort(in: prefix + "--hub-port=0"))
+        XCTAssertNil(AntigravityQuotaClient.geminiHubPort(in: "/tmp/agy --hub --hub-port=52078"))
+        XCTAssertNil(AntigravityQuotaClient.geminiHubPort(in: prefix.replacingOccurrences(of: "--hub ", with: "") + "--hub-port=52078"))
+        XCTAssertTrue(AntigravityQuotaClient.isLegacyLanguageServer("/Applications/Antigravity.app/Contents/Resources/language_server_macos_arm"))
+        XCTAssertTrue(AntigravityQuotaClient.isLegacyLanguageServer("/Applications/Antigravity IDE.app/Contents/Resources/language_server"))
+        XCTAssertFalse(AntigravityQuotaClient.isLegacyLanguageServer("/Applications/Other.app/language_server"))
+    }
+
+    func testGeminiHubConfigParsing() {
+        let html = #"<script>window.__APP_CONFIG__ = {"productName":"antigravity","csrfToken":"test-token","devMode":false};</script>"#
+        XCTAssertEqual(AntigravityQuotaClient.hubCSRFToken(in: Data(html.utf8)), "test-token")
+        XCTAssertNil(AntigravityQuotaClient.hubCSRFToken(in: Data(#"window.__APP_CONFIG__ = {"csrfToken":""};"#.utf8)))
+        XCTAssertNil(AntigravityQuotaClient.hubCSRFToken(in: Data("not a config".utf8)))
+    }
+
+    func testRetiredGrokHookCleanupPreservesCustomHooks() throws {
+        let home = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: home) }
+        let hook = home.appendingPathComponent(".grok/hooks/reset-build-notifications.json")
+        let script = home.appendingPathComponent("Library/Application Support/Reset!/Integrations/grok-build-hook.sh")
+        try FileManager.default.createDirectory(at: hook.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: script.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data("test".utf8).write(to: script)
+        let custom = Data(#"{"hooks":{"Stop":[]}}"#.utf8)
+        try custom.write(to: hook)
+        try RetiredIntegrationCleanup.removeGrokHook(home: home)
+        XCTAssertEqual(try Data(contentsOf: hook), custom)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: script.path))
+        let handler: [String: Any] = ["hooks": [["type": "command", "command": "'" + script.path + "'", "timeout": 5]]]
+        try JSONSerialization.data(withJSONObject: ["hooks": ["Stop": [handler], "StopFailure": [handler]]]).write(to: hook)
+        try RetiredIntegrationCleanup.removeGrokHook(home: home)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: hook.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: script.path))
+    }
+
     func testQuotaRemaining() {
         let window = QuotaWindow(utilization: 37, resetsAt: nil, windowSeconds: 300)
         XCTAssertEqual(window.remaining, 63)
@@ -176,64 +227,6 @@ final class ResetTests: XCTestCase {
         let decoded = AntigravityQuotaClient.decodeCachedUsage(try JSONEncoder().encode(old))
         XCTAssertEqual(decoded?.groups.first?.fiveHour?.remaining ?? -1, 80, accuracy: 0.001)
         XCTAssertEqual(decoded?.capturedAt, old.capturedAt)
-    }
-
-    func testKimiUsageParsesFiveHourWeeklyAndExtraBalance() throws {
-        let data = Data(
-            """
-            {
-              "usage": {
-                "name": "Weekly limit",
-                "used": 40,
-                "limit": 100,
-                "resetAt": "2026-07-30T12:00:00Z"
-              },
-              "limits": [{
-                "detail": {
-                  "remaining": 75,
-                  "limit": 100,
-                  "reset_in": 3600
-                },
-                "window": {
-                  "duration": 300,
-                  "timeUnit": "MINUTE"
-                }
-              }],
-              "boosterWallet": {
-                "balance": {
-                  "type": "BOOSTER",
-                  "amount": "20000000000",
-                  "amountLeft": "10000000000"
-                },
-                "monthlyUsed": {
-                  "currency": "CNY",
-                  "priceInCents": "5000"
-                }
-              }
-            }
-            """.utf8
-        )
-
-        let usage = try KimiQuotaClient.parseUsage(data, now: Date(timeIntervalSince1970: 1_700_000_000))
-        XCTAssertEqual(usage.fiveHour?.remaining ?? -1, 75, accuracy: 0.001)
-        XCTAssertEqual(usage.sevenDay?.remaining ?? -1, 60, accuracy: 0.001)
-        XCTAssertNotNil(usage.fiveHour?.resetsAt)
-        XCTAssertNotNil(usage.sevenDay?.resetsAt)
-        XCTAssertEqual(usage.extraUsageBalance ?? -1, 100, accuracy: 0.001)
-        XCTAssertEqual(usage.extraUsageCurrency, "CNY")
-    }
-
-    func testKimiUsageRejectsMissingQuotaWindows() {
-        XCTAssertThrowsError(try KimiQuotaClient.parseUsage(Data(#"{"limits":[]}"#.utf8)))
-    }
-
-    func testKimiWeeklyLabelClassification() throws {
-        let data = Data(
-            #"{"limits":[{"name":"Weekly limit","detail":{"used":20,"limit":100}}]}"#.utf8
-        )
-        let usage = try KimiQuotaClient.parseUsage(data)
-        XCTAssertNil(usage.fiveHour)
-        XCTAssertEqual(usage.sevenDay?.remaining ?? -1, 80, accuracy: 0.001)
     }
 
     func testUpdateVersionComparisonHandlesDateStyleTags() {

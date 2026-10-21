@@ -27,7 +27,7 @@ struct AgentDetector: Sendable {
             return AgentStatus(provider: provider, state: .notInstalled, executable: nil, usage: nil, detail: "未找到 \(provider.title) 的 CLI 或应用")
         }
         switch provider {
-        case .chatGPT, .claudeCode, .cursor, .googleAntigravity, .kimiCode:
+        case .chatGPT, .claudeCode, .cursor, .googleAntigravity:
             do {
                 let usage = try await usageReader.read(for: provider)
                 return AgentStatus(provider: provider, state: .connected, executable: path, usage: usage, detail: "已读取实时额度")
@@ -59,7 +59,7 @@ struct AgentDetector: Sendable {
         }
         // The desktop app can move or rename its bundled CLI between releases.
         // Resolve its identity instead of depending on a Resources filename.
-        guard provider == .chatGPT else { return nil }
+        guard provider == .chatGPT || provider == .googleAntigravity else { return nil }
         return await MainActor.run {
             provider.desktopBundleIdentifiers.lazy.compactMap { identifier in
                 guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return nil as String? }

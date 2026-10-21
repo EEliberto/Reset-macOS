@@ -8,7 +8,7 @@
   <p>
     <a href="https://github.com/EEliberto/Reset-macOS/releases/latest"><strong>下载 Reset!</strong></a>
     &nbsp;&nbsp;·&nbsp;&nbsp;
-    <a href="RELEASE_NOTES_260926.md">查看新功能</a>
+    <a href="RELEASE_NOTES_261021.md">查看新功能</a>
   </p>
   <p><sub>需要 macOS 26 或更高版本。</sub></p>
   <br>
@@ -33,9 +33,7 @@ Reset! 常驻于 Mac 菜单栏，以简洁的圆环显示当前 AI 智能体的�
 - Codex（ChatGPT）
 - Claude Code
 - Cursor
-- Google Antigravity 与 Antigravity IDE
-- Kimi
-- Grok CLI 本地状态
+- Gemini（兼容已安装的 Antigravity 与 Antigravity IDE）
 
 ## 信息留在这台 Mac 上
 
