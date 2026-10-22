@@ -6,25 +6,25 @@
     <description>Reset! Sparkle appcast</description>
     <language>zh-Hans</language>
     <item>
-      <title>Version 261021</title>
-      <pubDate>Wed, 21 Oct 2026 06:11:55 +0000</pubDate>
-      <sparkle:version>20261021</sparkle:version>
-      <sparkle:shortVersionString>261021</sparkle:shortVersionString>
+      <title>Version 261022</title>
+      <pubDate>Thu, 22 Oct 2026 00:18:56 +0000</pubDate>
+      <sparkle:version>20261022</sparkle:version>
+      <sparkle:shortVersionString>261022</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
       <description><![CDATA[<body>
   <h2>感谢你使用 Reset!</h2>
-  <p>版本号 261021 进行了如下更新和修复：</p>
+  <p>版本号 261022 进行了如下更新和修复：</p>
   <ol>
-    <li>兼容最新版 Gemini 内置的 Antigravity。你现在无需重复下载 Antigravity 了。</li>
-    <li>移除 Kimi、Grok CIL 模型识别能力 (用户量过低，不再维护)。</li>
+    <li>将 Claude Code 统一显示为 Claude，并修复仅安装 Claude 桌面版时被误判为未安装的问题。</li>
+    <li>新增“需订阅”提示；区分免费方案与缺少登录信息的情况，避免将未登录用户误判为未订阅。</li>
   </ol>
-  <p>Reset! 致力于为你的智能体使用带来更好的体验。如果你在使用 Reset! 时遇到任何问题，请在 <a href="https://github.com/EEliberto/Reset-macOS/issues">GitHub</a> 提交 Issue。</p>
+  <p>Reset! 致力于为你的智能体使用带来更好的体验。如果你在使用 Reset! 时遇到任何问题，请在 GitHub 提交 Issue。</p>
 </body>]]></description>
       <enclosure
-        url="https://github.com/EEliberto/Reset-macOS/releases/download/v261021/Reset-261021.zip"
-        length="4349102"
+        url="https://github.com/EEliberto/Reset-macOS/releases/download/v261022/Reset-261022.zip"
+        length="4351257"
         type="application/octet-stream"
-        sparkle:edSignature="hM7G1g7k3uG+zpEZtdcODMqAz1jcpb4NT7gGwpvrD9TTJnkH/9t7z64OlBMpFk6+DgNV/gPDH5VC/37xxyfyBA==" />
+        sparkle:edSignature="bqb7fTI0t+yiuxiYoFdjAujl7iZ8ad+T58dN1XZYnhFJg4TNaaHx9zMo1KMj9nRvli6HihqyGltVMAlngzlGDw==" />
     </item>
   </channel>
 </rss>
