@@ -83,6 +83,37 @@ final class ResetTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: script.path))
     }
 
+    func testClaudeDesktopIsSupportedWithoutCLI() throws {
+        XCTAssertEqual(ProviderKind.claudeCode.title, "Claude")
+        XCTAssertEqual(ProviderKind.claudeCode.rawValue, "cc")
+        XCTAssertTrue(ProviderKind.claudeCode.applicationPaths.contains("/Applications/Claude.app/Contents/MacOS/Claude"))
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let app = root.appendingPathComponent("Claude.app")
+        let executable = app.appendingPathComponent("Contents/MacOS/Claude")
+        try FileManager.default.createDirectory(at: executable.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try PropertyListSerialization.data(fromPropertyList: [
+            "CFBundleIdentifier": "com.anthropic.claudefordesktop",
+            "CFBundleExecutable": "Claude", "CFBundlePackageType": "APPL"
+        ], format: .xml, options: 0).write(to: app.appendingPathComponent("Contents/Info.plist"))
+        try Data("#!/bin/sh\n".utf8).write(to: executable)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: executable.path)
+        XCTAssertEqual(AgentDetector.desktopExecutablePath(at: app, for: .claudeCode), executable.path)
+        XCTAssertNil(AgentDetector.desktopExecutablePath(at: app, for: .chatGPT))
+    }
+
+    func testOnlyExplicitFreeClaudePlanRequiresSubscription() {
+        XCTAssertThrowsError(try LiveUsageReader.validateClaudeSubscription(" Free ")) { error in
+            guard case UsageReadError.subscriptionRequired = error else {
+                return XCTFail("Expected subscription-required error")
+            }
+        }
+        for plan in [nil, "", "pro", "max", "team", "enterprise", "unknown"] as [String?] {
+            XCTAssertNoThrow(try LiveUsageReader.validateClaudeSubscription(plan))
+        }
+        XCTAssertEqual(AgentState.needsSubscription.title, "需订阅")
+    }
+
     func testQuotaRemaining() {
         let window = QuotaWindow(utilization: 37, resetsAt: nil, windowSeconds: 300)
         XCTAssertEqual(window.remaining, 63)

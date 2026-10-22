@@ -33,6 +33,8 @@ struct AgentDetector: Sendable {
                 return AgentStatus(provider: provider, state: .connected, executable: path, usage: usage, detail: "已读取实时额度")
             } catch let error as UsageReadError {
                 switch error {
+                case .subscriptionRequired(let detail):
+                    return AgentStatus(provider: provider, state: .needsSubscription, executable: path, usage: nil, detail: detail)
                 case .notLoggedIn(let detail):
                     return AgentStatus(provider: provider, state: .needsLogin, executable: path, usage: nil, detail: detail)
                 case .unauthorized(let detail):
@@ -59,7 +61,7 @@ struct AgentDetector: Sendable {
         }
         // The desktop app can move or rename its bundled CLI between releases.
         // Resolve its identity instead of depending on a Resources filename.
-        guard provider == .chatGPT || provider == .googleAntigravity else { return nil }
+        guard provider == .chatGPT || provider == .googleAntigravity || provider == .claudeCode else { return nil }
         return await MainActor.run {
             provider.desktopBundleIdentifiers.lazy.compactMap { identifier in
                 guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return nil as String? }

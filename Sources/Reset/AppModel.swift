@@ -388,7 +388,7 @@ final class AppModel: ObservableObject {
             let failureStartedAt = prior?.failureStartedAt ?? Date()
             let isSustainedFailure = Date().timeIntervalSince(failureStartedAt) >= 10 * 60
             let health: ProviderHealth
-            if status.state == .needsLogin || status.state == .tokenStale {
+            if status.state == .needsLogin || status.state == .needsSubscription || status.state == .tokenStale {
                 health = isSustainedFailure ? .authorizationRequired : .stale
             } else {
                 health = isSustainedFailure ? .failing : .stale
@@ -425,7 +425,12 @@ final class AppModel: ObservableObject {
                 NSWorkspace.shared.open(url)
                 return
             }
-        case .claudeCode: paths = ["/System/Applications/Utilities/Terminal.app"]
+        case .claudeCode:
+            if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.anthropic.claudefordesktop") {
+                NSWorkspace.shared.open(url)
+                return
+            }
+            paths = ["/Applications/Claude.app", "/System/Applications/Utilities/Terminal.app"]
         }
         guard let path = paths.first(where: { FileManager.default.fileExists(atPath: $0) }) else {
             message = "未找到 \(provider.title) 的可打开应用"

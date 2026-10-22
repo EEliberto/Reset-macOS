@@ -3,13 +3,14 @@ import AppKit
 
 enum UsageReadError: LocalizedError {
     case notLoggedIn(String)
+    case subscriptionRequired(String)
     case unauthorized(String)
     case unavailable(String)
     case invalidResponse(String)
 
     var errorDescription: String? {
         switch self {
-        case .notLoggedIn(let message), .unauthorized(let message), .unavailable(let message), .invalidResponse(let message):
+        case .subscriptionRequired(let message), .notLoggedIn(let message), .unauthorized(let message), .unavailable(let message), .invalidResponse(let message):
             message
         }
     }
@@ -136,8 +137,9 @@ struct LiveUsageReader: Sendable {
 
     private func readClaudeCode() async throws -> ProviderUsage {
         let credential = try readClaudeCredential()
+        try Self.validateClaudeSubscription(credential.claudeAIOAuth.subscriptionType)
         guard !credential.claudeAIOAuth.accessToken.isEmpty else {
-            throw UsageReadError.notLoggedIn("Claude Code 凭据缺少 accessToken")
+            throw UsageReadError.notLoggedIn("Claude 登录信息不完整，请重新登录 Claude Code")
         }
 
         var request = URLRequest(url: URL(string: "https://api.anthropic.com/api/oauth/usage")!)
@@ -149,8 +151,16 @@ struct LiveUsageReader: Sendable {
         let (data, response) = try await URLSession.shared.data(for: request)
         try validate(response, provider: .claudeCode)
         var usage = try parseClaude(data)
-        usage.subscriptionTier = credential.claudeAIOAuth.subscriptionType ?? "pro"
+        usage.subscriptionTier = credential.claudeAIOAuth.subscriptionType
         return usage
+    }
+
+    // Missing credentials or a 403 are not evidence that an account is on Free.
+    // Only an explicit plan value can produce the subscription-required state.
+    static func validateClaudeSubscription(_ subscriptionType: String?) throws {
+        if subscriptionType?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "free" {
+            throw UsageReadError.subscriptionRequired("当前登录信息标记为免费方案。额度查询需受支持的订阅；如已升级，请重新登录 Claude Code。")
+        }
     }
 
     private func readClaudeCredential() throws -> ClaudeCredential {
@@ -160,12 +170,12 @@ struct LiveUsageReader: Sendable {
         let fileURL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent(".claude/.credentials.json")
         guard let data = try? Data(contentsOf: fileURL) else {
-            throw UsageReadError.notLoggedIn("Claude Code 未登录")
+            throw UsageReadError.notLoggedIn("未找到 Claude 额度查询登录信息。此功能需支持额度查询的订阅；已订阅请先在 Claude Code 中登录。")
         }
         do {
             return try JSONDecoder().decode(ClaudeCredential.self, from: data)
         } catch {
-            throw UsageReadError.invalidResponse("Claude Code 登录凭据格式异常")
+            throw UsageReadError.invalidResponse("Claude 登录凭据格式异常")
         }
     }
 
@@ -180,12 +190,12 @@ struct LiveUsageReader: Sendable {
         let credentialData = pipe.fileHandleForReading.readDataToEndOfFile()
         process.waitUntilExit()
         guard process.terminationStatus == 0 else {
-            throw UsageReadError.notLoggedIn("Claude Code 未登录")
+            throw UsageReadError.notLoggedIn("未找到 Claude 额度查询登录信息。此功能需支持额度查询的订阅；已订阅请先在 Claude Code 中登录。")
         }
         do {
             return try JSONDecoder().decode(ClaudeCredential.self, from: credentialData)
         } catch {
-            throw UsageReadError.invalidResponse("Claude Code 登录凭据格式异常")
+            throw UsageReadError.invalidResponse("Claude 登录凭据格式异常")
         }
     }
 
@@ -238,7 +248,7 @@ struct LiveUsageReader: Sendable {
     private func parseClaude(_ data: Data) throws -> ProviderUsage {
         guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let five = parseClaudeWindow(root["five_hour"], seconds: 5 * 3600) else {
-            throw UsageReadError.invalidResponse("Claude Code 额度响应缺少 five_hour")
+            throw UsageReadError.invalidResponse("Claude 额度响应缺少 five_hour")
         }
         let seven = parseClaudeWindow(root["seven_day"], seconds: 7 * 86400)
         let api = parseClaudeWindow(root["extra_usage"], seconds: 30 * 86400)

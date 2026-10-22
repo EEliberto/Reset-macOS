@@ -11,7 +11,7 @@ enum ProviderKind: String, CaseIterable, Codable, Identifiable, Hashable, Sendab
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .claudeCode: "Claude Code"
+        case .claudeCode: "Claude"
         case .chatGPT: "ChatGPT"
         case .cursor: "Cursor"
         case .googleAntigravity: "Gemini"
@@ -70,7 +70,7 @@ enum ProviderKind: String, CaseIterable, Codable, Identifiable, Hashable, Sendab
 
     var applicationPaths: [String] {
         switch self {
-        case .claudeCode: []
+        case .claudeCode: ["/Applications/Claude.app/Contents/MacOS/Claude"]
         case .chatGPT: [
             "/Applications/ChatGPT.app/Contents/Resources/codex-cli",
             "/Applications/ChatGPT.app/Contents/Resources/codex"
@@ -132,6 +132,7 @@ enum AgentState: String, Codable, Sendable {
     case connected
     case installed
     case needsLogin
+    case needsSubscription
     case tokenStale
     case unavailable
     case notInstalled
@@ -141,6 +142,7 @@ enum AgentState: String, Codable, Sendable {
         case .connected: "已连接"
         case .installed: "已安装"
         case .needsLogin: "需要登录"
+        case .needsSubscription: "需订阅"
         case .tokenStale: "令牌需刷新"
         case .unavailable: "暂不可用"
         case .notInstalled: "未安装"

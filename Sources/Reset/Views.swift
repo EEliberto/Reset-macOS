@@ -224,6 +224,7 @@ struct QuotaCard: View {
                 }
                 Spacer()
                 StatusPill(state: status.state)
+                    .help(status.detail ?? status.state.title)
             }
 
             if let usage = status.usage {
@@ -476,6 +477,7 @@ private struct StatusPill: View {
         case .connected: "checkmark.circle.fill"
         case .installed: "checkmark.circle"
         case .needsLogin: "person.crop.circle.badge.exclamationmark"
+        case .needsSubscription: "creditcard"
         case .tokenStale: "arrow.triangle.2.circlepath.circle"
         case .unavailable: "exclamationmark.circle"
         case .notInstalled: "minus.circle"
@@ -485,7 +487,7 @@ private struct StatusPill: View {
     private var tint: Color {
         switch state {
         case .connected: Color(nsColor: .systemGreen)
-        case .needsLogin, .tokenStale: Color(nsColor: .systemOrange)
+        case .needsLogin, .needsSubscription, .tokenStale: Color(nsColor: .systemOrange)
         default: .secondary
         }
     }
